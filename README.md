@@ -1,6 +1,7 @@
 # 🗄 Epic DataBase
 
 <a href="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml" target="_blank"><img src="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml/badge.svg" alt="Test"></a>
+<img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/gtaiyou24/c669f036cc2d247a212d766ae6c5df85/raw/pytest-coverage-comment.json" alt="Coverage">
 <a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/gtaiyou24/epic-database" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/gtaiyou24/epic-database.svg" alt="Coverage"></a>
 
 ## 📚 使い方

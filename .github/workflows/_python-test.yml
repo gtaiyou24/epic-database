@@ -8,6 +8,8 @@ on:
         required: false
         default: '3.12'
 
+permissions: write-all
+
 jobs:
   test:
       runs-on: ubuntu-latest
@@ -25,7 +27,25 @@ jobs:
           run: |
             pip install -r ./app/requirements.txt
             pip install -r ./test/requirements.txt
-            pytest ./test
+            pytest ./test --cov --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
+        - name: Create Coverage Comment
+          id: coverageComment
+          uses: MishaKav/pytest-coverage-comment@main
+          with:
+            pytest-coverage-path: pytest-coverage.txt
+            junitxml-path: ./pytest.xml
+        - name: Create Coverage Badge
+          uses: schneegans/dynamic-badges-action@v1.3.0
+          with:
+            auth: ${{ secrets.BADGE_GIST }}
+            gistID: c669f036cc2d247a212d766ae6c5df85
+            filename: pytest-coverage-comment.json
+            label: Coverage
+            message: ${{ steps.coverageComment.outputs.coverage }}
+            color: ${{ steps.coverageComment.outputs.color }}
+            namedLogo: python
+
+# NOTE: pytest ./test/unit を実行すると循環参照エラーが発生するため、上記のジョブに変更
 
 #  unit-test:
 #    runs-on: ubuntu-latest
