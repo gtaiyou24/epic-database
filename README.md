@@ -76,7 +76,7 @@ npm run generate-client
 バックエンド(FastAPI)のテストを実行する場合は、下記のコマンドを実行してください。
 ```bash
 # テスト実行に必要なライブラリをインストール
-pip install -r api/requirements.test.txt
+pip install -r test/requirements.txt
 
 # テストを実行
 pytest -v ./test
@@ -113,3 +113,10 @@ pytest -v ./test
 - 📧 メールサービス: Gmail / SendGrid
 
 </details>
+
+## 🕷️ データソース
+
+| データソース | 説明                 |
+|:----------:|:-------------------|
+| [Custom Search API](https://console.cloud.google.com/apis/library/customsearch.googleapis.com?hl=ja&pli=1&project=mento-staging2) | 企業のホームページを収集       |
+| [WebPilot API](https://www.webpilot.ai/contact/) | ホームページURLから企業情報を取得 |

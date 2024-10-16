@@ -1,0 +1,63 @@
+from typing import override
+
+from apigateway.domain.model.secret import Key, Secret
+from apigateway.port.adapter.service.secret.adapter import SecretManagerAdapter
+
+
+class SecretManagerAdapterStub(SecretManagerAdapter):
+    @override
+    def get(self, key: Key, version: float) -> Secret:
+        # TODO: 本来、シークレット値は GCP / AWS の Secret Manager で管理し、取得すべきですが、開発途中なので一旦ハードコードで実装
+        if key == Key.JWT_PRIVATE:
+            return Secret(key, 0.0, """-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----""")
+        raise NotImplementedError()
