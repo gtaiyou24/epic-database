@@ -8,8 +8,6 @@ on:
         required: false
         default: '3.12'
 
-permissions: write-all
-
 jobs:
   test:
       runs-on: ubuntu-latest
