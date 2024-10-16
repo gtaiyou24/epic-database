@@ -76,7 +76,7 @@ class GoogleAdapter(OAuthProviderAdapter):
             params={"access_token": token_json['access_token']}
         )
         if not userinfo_response.ok:
-            raise SystemException(ErrorCode.LINK_ACCOUNT_FAILURE, f'Google からアカウント情報を取得できませんでした')
+            raise SystemException(ErrorCode.LINK_ACCOUNT_FAILURE, 'Google からアカウント情報を取得できませんでした')
 
         return GoogleTranslator.to_account_from(token_json, userinfo_response.json())
 

@@ -37,6 +37,8 @@ class AccountResource(APIResource):
         )
         self.identity_application_service.link(command)
 
-    def unlink(self, request: UnlinkAccountRequest, current_user: CurrentUser = Depends(GetCurrentUser({"ALL"}))) -> None:
+    def unlink(self,
+               request: UnlinkAccountRequest,
+               current_user: CurrentUser = Depends(GetCurrentUser({"ALL"}))) -> None:
         command = UnlinkAccountCommand(current_user.id, request.provider)
         self.identity_application_service.unlink(command)
