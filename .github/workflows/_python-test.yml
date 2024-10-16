@@ -26,12 +26,6 @@ jobs:
             pip install -r ./app/requirements.txt
             pip install -r ./test/requirements.txt
             pytest ./test --cov=./app --cov-report=xml
-
-        # Codecov
-        - name: Use Node.js 20.x
-          uses: actions/setup-node@v3
-          with:
-            node-version: 20.x
         - name: Report Coverage
           uses: codecov/codecov-action@v3
           with:
