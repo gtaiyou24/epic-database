@@ -1,5 +1,4 @@
 from injector import singleton, inject
-from redis.commands.search.querystring import union
 
 from authority.application.authorization.command import AuthenticateEmailPasswordCommand, RevokeCommand, \
     RefreshCommand, AuthenticateAccountCommand
@@ -8,7 +7,7 @@ from authority.application.identity.dpo import UserDpo
 from authority.application.identity.subscriber import VerificationTokenGeneratedSubscriber
 from authority.domain.model.mail import EmailAddress
 from authority.domain.model.token import TokenRepository, BearerToken, RefreshToken
-from authority.domain.model.user import UserRepository, Token, UserId, User
+from authority.domain.model.user import UserRepository, Token, User
 from authority.domain.model.user.account import OAuthProviderService
 from common.application import transactional
 from common.domain.model import DomainEventPublisher
@@ -68,7 +67,13 @@ class AuthorizationApplicationService:
 
         if not user:
             # ユーザーが存在しない場合は、ユーザーを新規作成する
-            user = User.provision(self.user_repository.next_identity(), profile.username, profile.email_address, None, account)
+            user = User.provision(
+                self.user_repository.next_identity(),
+                profile.username,
+                profile.email_address,
+                None,
+                account
+            )
 
         # すでにユーザーが存在する場合は、認証完了とする
         if not user.is_verified():

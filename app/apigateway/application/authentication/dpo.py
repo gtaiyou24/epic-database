@@ -8,7 +8,6 @@ from apigateway.domain.model.secret import Secret
 from apigateway.domain.model.token.internal import InternalToken
 
 
-
 @dataclass(init=True, unsafe_hash=True, frozen=True)
 class InternalTokenDpo:
     __internal_token: InternalToken

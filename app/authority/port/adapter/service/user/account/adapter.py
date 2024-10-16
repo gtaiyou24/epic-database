@@ -22,7 +22,11 @@ class OAuthProviderAdapter(abc.ABC):
             self.provider_name = provider_name
             self.adapter = adapter
 
-        def authenticate(self, code: str, redirect_uri: str, code_verifier: str | None, grant_type: str) -> (Profile, Account):
+        def authenticate(self,
+                         code: str,
+                         redirect_uri: str,
+                         code_verifier: str | None,
+                         grant_type: str) -> (Profile, Account):
             return self.adapter().authenticate(code, redirect_uri, code_verifier, grant_type)
 
     @abc.abstractmethod
@@ -36,7 +40,11 @@ class GoogleAdapter(OAuthProviderAdapter):
         self.client_secret = client_secret
 
     @override
-    def authenticate(self, code: str, redirect_uri: str, code_verifier: str | None, grant_type: str) -> (Profile, Account):
+    def authenticate(self,
+                     code: str,
+                     redirect_uri: str,
+                     code_verifier: str | None,
+                     grant_type: str) -> (Profile, Account):
         data = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,

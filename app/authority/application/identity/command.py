@@ -60,12 +60,12 @@ class LinkAccountCommand:
 
     def __str__(self):
         return f"""{
-    'user_id': {self.user_id},
-    'provider': {self.provider},
-    'code': {self.code}, 
-    'redirect_uri': {self.redirect_uri}, 
-    'code_verifier': {self.code_verifier}, 
-    'grant_type': {self.grant_type}
+'user_id': {self.user_id},
+'provider': {self.provider},
+'code': {self.code}, 
+'redirect_uri': {self.redirect_uri}, 
+'code_verifier': {self.code_verifier}, 
+'grant_type': {self.grant_type}
 }"""
 
 

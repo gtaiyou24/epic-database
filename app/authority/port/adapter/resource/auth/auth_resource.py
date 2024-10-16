@@ -40,7 +40,8 @@ class AuthResource(APIResource):
     @property
     def authorization_application_service(self) -> AuthorizationApplicationService:
         self.__authorization_application_service = (
-                self.__authorization_application_service or DIContainer.instance().resolve(AuthorizationApplicationService)
+                self.__authorization_application_service or
+                DIContainer.instance().resolve(AuthorizationApplicationService)
         )
         return self.__authorization_application_service
 

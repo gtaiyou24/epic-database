@@ -5,7 +5,8 @@ from injector import inject
 from authority.domain.model.mail import EmailAddress
 from authority.domain.model.user.account import Account
 from authority.domain.model.user import User, UserId
-from authority.port.adapter.persistence.repository.mysql.user.driver import UsersTableRow, TokensTableRow, AccountsTableRow
+from authority.port.adapter.persistence.repository.mysql.user.driver import UsersTableRow, TokensTableRow, \
+    AccountsTableRow
 from common.application import UnitOfWork
 from common.port.adapter.persistence.repository.mysql import MySQLUnitOfWork
 

@@ -15,4 +15,3 @@ class LinkAccountRequest(BaseModel):
 
 class UnlinkAccountRequest(BaseModel):
     provider: Provider = Field(title="連携解除するプロバイダー名")
-

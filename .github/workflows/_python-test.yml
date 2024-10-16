@@ -24,7 +24,7 @@ jobs:
       - name: Run Unit Test
         run: |
           pip install -r ./app/requirements.txt
-          pip install -r ./test/requirements.test.txt
+          pip install -r ./test/requirements.txt
           pytest ./test/unit
   acceptance-test:
     runs-on: ubuntu-latest
@@ -41,5 +41,5 @@ jobs:
       - name: Run Acceptance Test
         run: |
           pip install -r ./app/requirements.txt
-          pip install -r ./test/requirements.test.txt
+          pip install -r ./test/requirements.txt
           pytest ./test/acceptance

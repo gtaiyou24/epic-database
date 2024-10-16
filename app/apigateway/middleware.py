@@ -36,7 +36,8 @@ class PublishInternalTokenMiddleware(BaseHTTPMiddleware):
     @property
     def authentication_application_service(self) -> AuthenticationApplicationService:
         self.__authentication_application_service = (
-            self.__authentication_application_service or DIContainer.instance().resolve(AuthenticationApplicationService)
+            self.__authentication_application_service or
+            DIContainer.instance().resolve(AuthenticationApplicationService)
         )
         return self.__authentication_application_service
 

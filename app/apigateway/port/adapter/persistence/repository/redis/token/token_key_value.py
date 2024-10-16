@@ -4,7 +4,7 @@ from typing import override
 
 import pytz
 
-from apigateway.domain.model.token import BearerToken, AccessToken
+from apigateway.domain.model.token import BearerToken
 from apigateway.domain.model.user import UserId
 from common.port.adapter.persistence.repository.redis import KeyValue
 

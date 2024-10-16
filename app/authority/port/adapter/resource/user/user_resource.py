@@ -70,7 +70,9 @@ class UserResource(APIResource):
         dpo = self.identity_application_service.user(current_user.id)
         return UserJson.from_(dpo)
 
-    def update_me(self, request: SaveUserRequest, current_user: CurrentUser = Depends(GetCurrentUser({'ALL'}))) -> UserJson:
+    def update_me(self,
+                  request: SaveUserRequest,
+                  current_user: CurrentUser = Depends(GetCurrentUser({'ALL'}))) -> UserJson:
         command = SaveUserCommand(
             user_id=current_user.id,
             username=request.username,
