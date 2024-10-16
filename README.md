@@ -2,8 +2,6 @@
 
 <a href="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml" target="_blank"><img src="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml/badge.svg" alt="Test"></a>
 
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/gtaiyou24/epic-database" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/gtaiyou24/epic-database.svg" alt="Coverage"></a>
-
 ## 📚 使い方
 <details><summary><b>🏃 起動する</b></summary>
 
