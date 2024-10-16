@@ -4,6 +4,7 @@ from di import DIContainer
 from fastapi import APIRouter
 
 from common.core import AppModule
+from datamart.port.adapter.resource.mart import MartResource
 
 
 class DataMart(AppModule):
@@ -19,4 +20,5 @@ class DataMart(AppModule):
     @property
     def router(self) -> APIRouter:
         router = APIRouter(tags=["Data Mart"])
+        router.include_router(MartResource().router)
         return router
