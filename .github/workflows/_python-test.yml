@@ -34,7 +34,7 @@ jobs:
             pytest-coverage-path: pytest-coverage.txt
             junitxml-path: ./pytest.xml
         - name: Create Coverage Badge
-          uses: schneegans/dynamic-badges-action@v1.7.0
+          uses: schneegans/dynamic-badges-action@v1.3.0
           with:
             auth: ${{ secrets.BADGE_GIST }}
             gistID: 371a767611f62dda0d53cda4e74c3136
@@ -43,7 +43,6 @@ jobs:
             message: ${{ steps.coverageComment.outputs.coverage }}
             color: ${{ steps.coverageComment.outputs.color }}
             namedLogo: python
-            forceUpdate: true
 
 # NOTE: pytest ./test/unit を実行すると循環参照エラーが発生するため、上記のジョブに変更
 
