@@ -32,6 +32,7 @@ jobs:
           id: coverageComment
           uses: MishaKav/pytest-coverage-comment@main
           with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
             pytest-coverage-path: pytest-coverage.txt
             junitxml-path: ./pytest.xml
         - name: Create Coverage Badge
