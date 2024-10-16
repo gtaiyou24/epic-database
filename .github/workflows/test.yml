@@ -7,8 +7,6 @@ on:
   pull_request:  # プルリクエストに反応
     types: [opened, synchronize]  # プルリクエストがオープン、更新された場合にトリガー
 
-permissions: write-all
-
 jobs:
   test:
     name: '✅ テスト'
