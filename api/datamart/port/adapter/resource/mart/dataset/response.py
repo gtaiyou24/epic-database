@@ -26,7 +26,6 @@ class CompanyJson(BaseModel):
     class URL(ContactPoint):
         url: str = Field(title="お問合せURL")
 
-
     class Address(BaseModel):
         country: str = Field(title="国名", examples=["JP"])
         postal_code: int = Field(title="郵便番号", min_length=7, max_length=7, examples=[1028282])

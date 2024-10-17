@@ -24,5 +24,3 @@ class Data:
 
     def add(self, value: KeyValue) -> None:
         pass
-
-

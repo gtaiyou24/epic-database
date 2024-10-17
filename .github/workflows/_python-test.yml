@@ -23,7 +23,7 @@ jobs:
             python-version: ${{ inputs.python-version }}
         - name: Run Python Test
           run: |
-            pip install -r ./app/requirements.txt
+            pip install -r ./api/requirements.txt
             pip install -r ./test/requirements.txt
             pytest ./test
 
