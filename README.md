@@ -83,6 +83,20 @@ pytest -v ./test
 
 </details>
 
+<details><summary><b>🌏 インフラを構築する</b></summary>
+
+```bash
+terraform init  # 初めて実行する場合のみ初期化する
+
+terraform plan  # 定義内容のチェック
+
+terraform apply  # インフラを構築
+
+terraform destroy  # インフラを破壊
+```
+
+</details>
+
 ## 🛠️ 技術スタック
 <details><summary><b>🔨 バックエンド</b></summary>
 
