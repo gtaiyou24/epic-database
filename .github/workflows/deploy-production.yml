@@ -34,7 +34,7 @@ jobs:
   test:
     needs: check-input
     name: '✅ テスト'
-    uses: ./.github/workflows/test.yml
+    uses: ./.github/workflows/_python-test.yml
     with:
       python-version: '3.12'
 
