@@ -1,0 +1,57 @@
+name: "🚀 Deploy: Production"
+run-name: 📌  <${{ inputs.deploy_to }}> 本番環境へ ${{ github.ref_name }} をデプロイ 🚀
+
+on:
+  # 手動トリガー
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        type: choice
+        description: Deploy to
+        default: all
+        options:
+          - all
+          - api
+          - batch
+          - consumer
+      approval:
+        description: 'type deploy/production'
+        required: true
+
+# 本番リリースワークフローを同時に実行できないようにコンカレンシーを使用
+concurrency: ${{ github.workflow }}
+
+jobs:
+  check-input:
+    runs-on: ubuntu-latest
+    name: '👀 リリースチェック'
+    steps:
+      - if: ${{ github.event.inputs.approval != 'deploy/production' }}
+        run: echo '::error ::`approval` に `deploy/production` と入力してください'; exit 1
+      - if: ${{ github.ref_name != 'main' }}
+        run: echo '::error ::`branch` は `main` を指定してください'; exit 1
+
+  test:
+    needs: check-input
+    name: '✅ テスト'
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-version: '3.12'
+
+  deploy-api:
+    if: ${{ (github.event.inputs.deploy_to == 'all') || (github.event.inputs.deploy_to == 'api') }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-to-cloud-run.yml
+    with:
+      project-id: ${{ vars.GCP_PROJECT_ID }}
+      workload-identity-provider: ${{ vars.GCP_WIF_PROVIDER }}
+      service-account: ${{ vars.GCP_WIF_SERVICE_ACCOUNT }}
+      registry: 'epic-database'
+      cloud-run-name: 'epic-database'
+      cloud-run-service-account: ${{ vars.GCP_CLOUD_RUN_SERVICE_ACCOUNT }}
+      cloud-run-min-instances: 0
+      env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
+      secrets: ""
+      region: 'asia-northeast1'
+      cleanup-images: true
