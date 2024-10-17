@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from common.port.adapter.resource import APIResource
-from datamart.port.adapter.resource.mart.dataset import DatasetResource
+from datamart.port.adapter.resource.mart.dataset import DatasetResource, CompanyResource
 
 
 class MartResource(APIResource):
@@ -9,7 +9,8 @@ class MartResource(APIResource):
 
     def __init__(self):
         self.router.add_api_route("", self.list, name="データセット一覧取得")
-        self.router.include_router(DatasetResource().router, prefix="/{dataset_id}")
+        self.router.include_router(CompanyResource().router, prefix="/company")
+        self.router.include_router(DatasetResource().router, prefix="/{name}")
 
     def list(self):
         pass
