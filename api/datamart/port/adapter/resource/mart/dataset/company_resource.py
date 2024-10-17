@@ -19,17 +19,17 @@ class CompanyResource(APIResource):
     def search(self, name: str):
         pass
 
-    def create(self, name: str, request) -> DataJson:
+    def create(self, name: str, request) -> CompanyJson:
         """新しいデータを新規作成"""
         pass
 
     def get(self, id: str) -> CompanyJson:
         pass
 
-    def update(self, name: str, id: str, request) -> DataJson:
+    def update(self, name: str, id: str, request) -> CompanyJson:
         """新しいデータに置き換える"""
 
-    def patch(self, name: str, id: str, request) -> DataJson:
+    def patch(self, name: str, id: str, request) -> CompanyJson:
         """既存データに新しいプロパティを追加する"""
         pass
 
