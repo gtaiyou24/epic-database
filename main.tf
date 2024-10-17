@@ -54,25 +54,26 @@ resource "google_project_iam_member" "github-actions-push-docker-image" {
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
-# 🛠️ Workload Identity プール・プロバイダを作成する
-resource "google_iam_workload_identity_pool" "github_actions_pool" {  # Workload Identity プールを作成
-  workload_identity_pool_id = "github-actions-pool"
-  display_name              = "GitHub Actions プール"
+# 🛠️ 3. Workload Identity プール・プロバイダを作成する
+resource "google_iam_workload_identity_pool" "github_actions_oidc" {  # Workload Identity プールを作成
+  workload_identity_pool_id = "github-actions-oidc"
+  display_name              = "GitHub Actions OIDC"
   project                   = var.project_id
 }
 resource "google_iam_workload_identity_pool_provider" "github_actions_provider" {  # Workload Identity プロバイダを作成
-  workload_identity_pool_id          = google_iam_workload_identity_pool.github_actions_pool.workload_identity_pool_id
-  workload_identity_pool_provider_id = "github-actions-provider"
-  display_name                       = "GitHub Actions Provider"
-  attribute_mapping                  = {
-    "google.subject"       = "assertion.sub"
-    "attribute.repository" = "assertion.repository"
-    "attribute.actor"      = "assertion.actor"
+  workload_identity_pool_id = google_iam_workload_identity_pool.github_actions_oidc.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github-actions-oidc-provider"
+  display_name = "GitHub Actions OIDC Provider"
+  attribute_condition = "assertion.repository == \"${var.github_repo_owner}/${var.github_repo_name}\""
+
+  attribute_mapping = {
+    "google.subject"          = "assertion.sub"
+    "attribute.repository"    = "assertion.repository"
+    "attribute.actor"         = "assertion.actor"
   }
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
-  attribute_condition = "attribute.repository == assertion.repository && attribute.repository_owner == assertion.repository_owner"
 }
 
 # 👌 4. Workload Identity プロバイダが該当のサービスアカウントの権限を借用することを許可する
@@ -80,7 +81,7 @@ resource "google_service_account_iam_binding" "allow_workload_identity_user" {
   service_account_id = google_service_account.github_actions.name
   role = "roles/iam.workloadIdentityUser"
   members = [
-    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions_pool.workload_identity_pool_id}/attribute.repository/${var.github_repo_owner}/${var.github_repo_name}"
+    "principalSet://iam.googleapis.com/projects/${var.project_number}/locations/global/workloadIdentityPools/${google_iam_workload_identity_pool.github_actions_oidc.workload_identity_pool_id}/attribute.repository/${var.github_repo_owner}/${var.github_repo_name}"
   ]
 }
 
@@ -100,32 +101,33 @@ resource "google_project_iam_member" "cloud_run_admin_role_binding" {  # Cloud R
   role    = "roles/run.admin"
   member  = "serviceAccount:${google_service_account.cloud_run_service_account.email}"
 }
-resource "google_cloud_run_v2_service" "compute" {
-  name     = var.github_repo_name
-  location = var.region
 
-  template {
-    containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.github_repo_name}:latest"
-      resources {
-        limits = {
-          cpu    = "1"
-          memory = "512Mi"
-        }
-      }
-    }
-    # サービスアカウントを指定
-    service_account = google_service_account.cloud_run_service_account.email
-  }
-
-  traffic {
-    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
-    percent = 100
-  }
-}
-# Cloud Run サービスにアクセス権を付与 (全ユーザーに公開する場合)
-resource "google_project_iam_member" "cloud_run_invoker_permission" {
-  project = var.project_id
-  role    = "roles/run.invoker"
-  member  = "allUsers" # 公開する場合。非公開なら特定のIAMメンバーを指定
-}
+# resource "google_cloud_run_v2_service" "compute" {
+#   name     = var.github_repo_name
+#   location = var.region
+#
+#   template {
+#     containers {
+#       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.github_repo_name}:latest"
+#       resources {
+#         limits = {
+#           cpu    = "1"
+#           memory = "512Mi"
+#         }
+#       }
+#     }
+#     # サービスアカウントを指定
+#     service_account = google_service_account.cloud_run_service_account.email
+#   }
+#
+#   traffic {
+#     type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+#     percent = 100
+#   }
+# }
+# # Cloud Run サービスにアクセス権を付与 (全ユーザーに公開する場合)
+# resource "google_project_iam_member" "cloud_run_invoker_permission" {
+#   project = var.project_id
+#   role    = "roles/run.invoker"
+#   member  = "allUsers" # 公開する場合。非公開なら特定のIAMメンバーを指定
+# }

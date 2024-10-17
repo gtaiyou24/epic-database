@@ -45,7 +45,7 @@ jobs:
     uses: ./.github/workflows/_deploy-to-cloud-run.yml
     with:
       project-id: 'epic-database-438905'
-      workload-identity-provider: 'projects/425814525781/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+      workload-identity-provider: 'projects/425814525781/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
       service-account: 'github-actions@epic-database-438905.iam.gserviceaccount.com'
       registry: 'epic-database'
       cloud-run-name: 'epic-database'
