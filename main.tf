@@ -30,7 +30,7 @@ resource "google_project_service" "googleapis" {
   # 依存サービスを無効にするためのオプション
   disable_dependent_services = true
 }
-resource "time_sleep" "wait_30_seconds" {  # googleapis が有効になるまでの数秒待機する
+resource "time_sleep" "wait_60_seconds" {  # googleapis が有効になるまでの数秒待機する
   depends_on      = [google_project_service.googleapis]
   create_duration = "60s"
 }

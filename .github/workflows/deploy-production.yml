@@ -44,12 +44,12 @@ jobs:
     name: '🚀 デプロイ'
     uses: ./.github/workflows/_deploy-to-cloud-run.yml
     with:
-      project-id: 'epic-datahub-439001'
-      workload-identity-provider: 'projects/729163404131/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
-      service-account: 'github-actions@epic-datahub-439001.iam.gserviceaccount.com'
-      registry: 'epic-datahub'
-      cloud-run-name: 'epic-datahub'
-      cloud-run-service-account: 'cloud-run-service-account@epic-datahub-439001.iam.gserviceaccount.com'
+      project-id: 'epic-database-439005'
+      workload-identity-provider: 'projects/917173493008/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
+      service-account: 'github-actions@epic-database-439005.iam.gserviceaccount.com'
+      registry: 'epic-database'
+      cloud-run-name: 'epic-database'
+      cloud-run-service-account: 'cloud-run-service-account@epic-database-439005.iam.gserviceaccount.com'
       cloud-run-min-instances: 0
       env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
       secrets: ""

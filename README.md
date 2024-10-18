@@ -1,6 +1,6 @@
-# 🗄 Epic DataHub
+# 🗄 Epic DataBase
 
-<a href="https://github.com/gtaiyou24/epic-datahub/actions/workflows/test.yml" target="_blank"><img src="https://github.com/gtaiyou24/epic-datahub/actions/workflows/test.yml/badge.svg" alt="Test"></a>
+<a href="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml" target="_blank"><img src="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml/badge.svg" alt="Test"></a>
 
 ## 📚 使い方
 <details><summary><b>🏃 起動する</b></summary>
