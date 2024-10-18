@@ -1,13 +1,13 @@
 variable "project_id" {
   description = "Google Cloud Project ID"
   type        = string
-  default     = "epic-datahub"
+  default     = "epic-datahub-439001"
 }
 
 variable "project_number" {
   description = "Google Cloud Project Number"
   type        = string
-  default     = "175254671065"
+  default     = "729163404131"
 }
 
 variable "region" {

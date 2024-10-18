@@ -86,6 +86,15 @@ pytest -v ./test
 <details><summary><b>🌏 インフラを構築する</b></summary>
 
 ```bash
+# Google Cloud SDK と Google アカウントを連携させる
+gcloud auth login
+
+# プロジェクトを確認
+gcloud projects list
+
+# プロジェクトを変更する
+gcloud config set project {PROJECT_ID}
+
 terraform init  # 初めて実行する場合のみ初期化する
 
 terraform plan  # 定義内容のチェック

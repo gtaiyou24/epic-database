@@ -15,17 +15,24 @@ provider "google" {
 # 💡 1. GCP API を有効にする
 locals {
   services = toset([
+    "iam.googleapis.com",
     "iamcredentials.googleapis.com",
     "secretmanager.googleapis.com",
     "artifactregistry.googleapis.com",
-    "run.googleapis.com",
-    "iam.googleapis.com"
+    "run.googleapis.com"
   ])
 }
-resource "google_project_service" "apis" {
+resource "google_project_service" "googleapis" {
   project = var.project_id
   for_each = local.services
   service = each.value
+
+  # 依存サービスを無効にするためのオプション
+  disable_dependent_services = true
+}
+resource "time_sleep" "wait_30_seconds" {  # googleapis が有効になるまでの数秒待機する
+  depends_on      = [google_project_service.googleapis]
+  create_duration = "60s"
 }
 
 # ⚙️ 2. GitHub Actions のサービスアカウントを作成する
