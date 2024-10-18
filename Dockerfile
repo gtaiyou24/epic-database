@@ -3,8 +3,8 @@ FROM python:3.12-slim
 ENV TZ=Asia/Tokyo
 
 ARG project_dir=/app/
-COPY api $project_dir
-COPY api/requirements.txt $project_dir
+COPY backend $project_dir
+COPY backend/requirements.txt $project_dir
 WORKDIR $project_dir
 
 RUN apt-get update -y \

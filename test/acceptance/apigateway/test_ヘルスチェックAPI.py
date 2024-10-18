@@ -2,7 +2,7 @@ from httpx import Response
 
 from fastapi.testclient import TestClient
 
-from api import main
+from backend import main
 
 
 class Test_ヘルスチェックAPI:

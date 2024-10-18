@@ -11,7 +11,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./api:/app/
+      - ./backend:/app/
     command: "--reload"
     depends_on:
       mysql:
