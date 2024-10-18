@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: epic-database
+    container_name: epic-datahub
     env_file:
       - .env.local
       #- .env
@@ -25,18 +25,18 @@ services:
   mysql:
     image: mysql:8.0
     platform: linux/x86_64
-    container_name: epic-database-mysql
+    container_name: epic-datahub-mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
-      - MYSQL_DATABASE=epic-database
+      - MYSQL_DATABASE=epic-datahub
       - TZ=Asia/Tokyo
     ports:
       - "3306:3306"
     volumes:
       - ./infrastructure/mysql/conf.d:/etc/mysql/conf.d
-      - epic-database-mysql-volume:/var/lib/mysql
+      - epic-datahub-mysql-volume:/var/lib/mysql
     tty: true
     healthcheck:
       # MySQL が起動しているか確認するための設定
@@ -50,16 +50,16 @@ services:
   postgresql:
     image: postgres:14
     platform: linux/x86_64
-    container_name: epic-database-postgresql
+    container_name: epic-datahub-postgresql
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=epic-database
+      - POSTGRES_DB=epic-datahub
       - TZ=Asia/Tokyo
     ports:
       - "5432:5432"
     volumes:
-      - epic-database-postgresql-volume:/var/lib/postgresql
+      - epic-datahub-postgresql-volume:/var/lib/postgresql
     tty: true
     healthcheck:
       # Postgresql が起動しているか確認するための設定
@@ -73,11 +73,11 @@ services:
   redis:
     image: redis:7.4
     platform: linux/x86_64
-    container_name: epic-database-redis
+    container_name: epic-datahub-redis
     ports:
       - "6379:6379"
     volumes:
-      - epic-database-redis-volume:/data
+      - epic-datahub-redis-volume:/data
     tty: true
     healthcheck:
       test: [ 'CMD', 'redis-cli', 'ping' ]
@@ -88,18 +88,18 @@ services:
   # Mail Server
   mailhog:
     image: mailhog/mailhog
-    container_name: epic-database-mailhog
+    container_name: epic-datahub-mailhog
     ports:
       - "8025:8025"
 
 volumes:
   # MySQL
-  epic-database-mysql-volume:
+  epic-datahub-mysql-volume:
     driver: 'local'
   # Postgresql
-  epic-database-postgresql-volume:
+  epic-datahub-postgresql-volume:
     driver: 'local'
-  epic-database-redis-volume:
+  epic-datahub-redis-volume:
     driver: 'local'
 
 networks:

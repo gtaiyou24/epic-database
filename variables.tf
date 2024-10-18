@@ -1,13 +1,13 @@
 variable "project_id" {
   description = "Google Cloud Project ID"
   type        = string
-  default     = "epic-database-438905"
+  default     = "epic-datahub"
 }
 
 variable "project_number" {
   description = "Google Cloud Project Number"
   type        = string
-  default     = "425814525781"
+  default     = "175254671065"
 }
 
 variable "region" {
@@ -19,7 +19,7 @@ variable "region" {
 variable "image" {
   description = "Docker image for Cloud Run"
   type        = string
-  default     = "asia-northeast1-docker.pkg.dev/epic-database-438905/epic-database:latest"
+  default     = "asia-northeast1-docker.pkg.dev/epic-datahub/epic-datahub:latest"
 }
 
 variable "github_repo_owner" {
@@ -31,5 +31,5 @@ variable "github_repo_owner" {
 variable "github_repo_name" {
   description = "デプロイする GitHub リポジトリ名"
   type        = string
-  default     = "epic-database"
+  default     = "epic-datahub"
 }
