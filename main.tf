@@ -53,6 +53,12 @@ resource "google_project_iam_member" "github-actions-push-docker-image" {
   role    = "roles/artifactregistry.repoAdmin"  # Artifact Registry へのプッシュ、削除をするためのロール
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
+# GitHub Actions サービスアカウントに cloud-run-service-account を使用する権限を付与
+resource "google_service_account_iam_member" "github_actions_can_act_as_cloud_run_sa" {
+  service_account_id = google_service_account.cloud_run_service_account.name
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
 
 # 🛠️ 3. Workload Identity プール・プロバイダを作成する
 resource "google_iam_workload_identity_pool" "github_actions_oidc" {  # Workload Identity プールを作成
@@ -98,7 +104,7 @@ resource "google_project_iam_member" "cloud_run_iam_role_binding" {
 }
 resource "google_project_iam_member" "cloud_run_admin_role_binding" {  # Cloud Run の管理者権限
   project = var.project_id
-  role    = "roles/run.admin"
+  role    = "roles/run.admin"  # Cloud Run の管理者権限
   member  = "serviceAccount:${google_service_account.cloud_run_service_account.email}"
 }
 
