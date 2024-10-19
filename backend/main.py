@@ -8,7 +8,7 @@ from apigateway import apigateway
 from common import common
 from common.port.adapter.resource.error import ErrorJson
 from apigateway.middleware import MonitoringMiddleware, PublishInternalTokenMiddleware
-from datamart import datamart
+from listing import listing
 
 
 @asynccontextmanager
@@ -16,11 +16,11 @@ async def lifespan(app: FastAPI):
     """API 起動前と終了後に実行する処理を記載する"""
     common.startup()
     apigateway.startup()
-    datamart.startup()
+    listing.startup()
     yield
     common.shutdown()
     apigateway.shutdown()
-    datamart.shutdown()
+    listing.shutdown()
 
 
 app = FastAPI(
@@ -57,4 +57,4 @@ app.add_middleware(MonitoringMiddleware)  # エラー/ログ監視のための�
 app.add_middleware(PublishInternalTokenMiddleware)  # 内部通信用トークンを発行
 
 app.include_router(apigateway.router)
-app.include_router(datamart.router)
+app.include_router(listing.router)
