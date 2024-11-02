@@ -9,7 +9,7 @@ from authority.port.adapter.resource.auth.response import TokenJson
 from common.exception import SystemException, ErrorCode
 from common.port.adapter.resource import APIResource
 from common.port.adapter.resource.error import ErrorJson
-from dependency import oauth2_scheme
+from common.port.adapter.resource.dependency import oauth2_scheme
 
 
 class AuthResource(APIResource):

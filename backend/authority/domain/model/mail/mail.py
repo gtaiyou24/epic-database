@@ -34,18 +34,18 @@ class VerificationMail(Mail):
   <title>メールアドレス認証</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;
-    padding: 20px;">
+padding: 20px;">
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">メールアドレス認証</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>この度はご登録ありがとうございました！下記の認証ボタンをクリックし、登録を完了させてください。</p>
     <div style="text-align: center; margin: 30px 0;">
       <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">
         <a href="{os.getenv('FRONTEND_URL')}/auth/new-verification?token={verification_token.value}"
-            style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none;
-            border-radius: 5px; font-weight: bold;">メールアドレスを認証</a>
+        style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px;
+         font-weight: bold;">メールアドレスを認証</a>
       </span>
     </div>
     <p>10分以内に認証を完了されない場合は、上記のボタンは無効になります。</p>
@@ -71,25 +71,25 @@ class PasswordResetMail(Mail):
   <title>パスワード再設定のご案内</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;
-    padding: 20px;">
+padding: 20px;">
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
     <h1 style="color: white; margin: 0;">パスワードの再設定</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>ご利用いただきありがとうございます。</p>
     <p>パスワードの再設定依頼を受け付けました。お心当たりのない場合は、本メールを無視もしくは破棄していただきますようお願いします。</p>
     <p>パスワードを再設定するには以下のボタンをクリックしてください。</p>
     <div style="text-align: center; margin: 30px 0;">
       <a href="{os.getenv('FRONTEND_URL')}/auth/new-password?token={password_reset_token.value}"
-        style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px;
-            font-weight: bold;">新しいパスワードを設定</a>
+      style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px;
+      font-weight: bold;">新しいパスワードを設定</a>
     </div>
     <p>このリンクの有効期限は10分です。</p>
     <p>有効期限を過ぎてしまった場合はお手数ですが、以下のボタンから再度パスワードの再設定をご依頼下さい。</p>
     <div style="text-align: center; margin: 30px 0;">
       <a href="{os.getenv('FRONTEND_URL')}/auth/reset" style="background-color: #4CAF50; color: white;
-        padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">パスワードを再設定依頼</a>
+      padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">パスワードを再設定依頼</a>
     </div>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">

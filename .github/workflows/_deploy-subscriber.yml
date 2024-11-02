@@ -1,0 +1,109 @@
+name: _deploy-subscriber
+
+on:
+  workflow_call:
+    inputs:
+      project-id:
+        description: 'Project ID'
+        type: string
+        required: true
+      region:
+        description: 'GCP region'
+        type: string
+        required: false
+        default: 'asia-northeast1'
+      workload-identity-provider:
+        description: 'Workload Identity プロバイダ'
+        type: string
+        required: true
+      github-actions-service-account:
+        description: 'GitHub Actions サービスアカウント'
+        type: string
+        required: true
+      docker-tag:
+        description: 'Docker タグ'
+        type: string
+        required: false
+      cloud-run-name:
+        description: 'Cloud Run Name'
+        type: string
+        required: true
+      cloud-run-service-account:
+        description: 'Cloud Run のサービスアカウント'
+        type: string
+        required: true
+      cloud-run-min-instances:
+        description: 'Cloud Run の最小インスタンス数'
+        type: number
+        required: false
+        default: 0
+      cloud-run-port:
+        description: 'Cloud Run で公開するポート番号'
+        type: number
+        default: 8080
+      cloud-run-env-vars:
+        description: 'Cloud Run で利用する環境変数. ex) ^@^KEY1=VALUE1@KEY2=@KEY3=VALUE2,VALUE3'
+        type: string
+        required: true
+#      cloud-run-secrets:
+#        description: 'Cloud Run で利用するシークレット値. ex) 環境変数名1=SECRET1:latest,環境変数名2=SECRET2:latest,'
+#        type: string
+#        required: false
+
+concurrency:
+  group: deploy-subscriber-${{ inputs.cloud-run-name }}-${{ inputs.env }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: '${{ inputs.cloud-run-name }} をデプロイ'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Google Cloud 認証
+        id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: ${{ inputs.workload-identity-provider }}
+          service_account: ${{ inputs.github-actions-service-account }}
+
+      - name: gcloud CLI/SDK のセットアップ
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Docker 認証
+        run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
+
+      # 無料枠を超過しないように古いDockerイメージを削除
+      - name: Docker イメージのクリーンアップ
+        uses: 'docker://us-docker.pkg.dev/gcr-cleaner/gcr-cleaner/gcr-cleaner-cli'
+        continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
+        with:
+          args: >-
+            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber
+            -tag-filter-any=.*
+
+      - name: Docker ファイルをビルドし、プッシュ
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend/
+          file: ./backend/Dockerfile.subscriber
+          push: true
+          tags: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber:${{ inputs.docker-tag || github.sha }}
+
+      - name: デプロイ
+        run: |-
+          gcloud run deploy ${{ inputs.cloud-run-name }} \
+          --region ${{ inputs.region }} \
+          --image ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber:${{ inputs.docker-tag || github.sha }} \
+          --platform "managed" \
+          --service-account ${{ inputs.cloud-run-service-account }} \
+          --min-instances ${{ inputs.cloud-run-min-instances }} \
+          --port ${{ inputs.cloud-run-port }} \
+          --set-env-vars ${{ inputs.cloud-run-env-vars }} \
+          --allow-unauthenticated \
+          --ingress "internal-and-cloud-load-balancing" \
+          --quiet

@@ -11,10 +11,10 @@ from authority.domain.model.user.account import OAuthProviderService
 from authority.port.adapter.persistence.repository.inmem import InMemUserRepository, InMemTokenRepository
 from authority.port.adapter.persistence.repository.mysql.user import MySQLUserRepository
 from authority.port.adapter.persistence.repository.redis.token import RedisTokenRepository
-from authority.port.adapter.resource.auth import AuthResource
+from authority.port.adapter.resource.auth.auth_resource import AuthResource
 from authority.port.adapter.resource.auth.google import GoogleResource
 from authority.port.adapter.resource.user import UserResource
-from authority.port.adapter.resource.user.account import AccountResource
+from authority.port.adapter.resource.user.account.account_resource import AccountResource
 from authority.port.adapter.service.mail import SendMailServiceImpl
 from authority.port.adapter.service.mail.adapter import MailDeliveryAdapter
 from authority.port.adapter.service.mail.adapter.gmail import GmailAdapter
@@ -25,6 +25,7 @@ from authority.port.adapter.service.user import EncryptionServiceImpl
 from authority.port.adapter.service.user.account import OAuthProviderServiceImpl
 from authority.port.adapter.service.user.account.adapter import GoogleAdapter
 from common.core import AppModule
+from common.port.adapter.messaging import ExchangeListener
 
 
 class Authority(AppModule):
@@ -64,3 +65,8 @@ class Authority(AppModule):
         router.include_router(UserResource().router)
         router.include_router(AccountResource().router)
         return router
+
+    @override
+    @property
+    def subscribers(self) -> set[ExchangeListener]:
+        return set()

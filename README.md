@@ -1,6 +1,8 @@
-# 🗄 Epic DataBase
+# 🗄️ Epic DataBase
 
-<a href="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml" target="_blank"><img src="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml/badge.svg" alt="Test"></a>
+<a href="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml" target="_blank">
+  <img src="https://github.com/gtaiyou24/epic-database/actions/workflows/test.yml/badge.svg" alt="Test">
+</a>
 
 ## 📚 使い方
 <details><summary><b>🏃 起動する</b></summary>
@@ -11,58 +13,27 @@ docker-compose up --build
 
 </details>
 
-<details><summary><b>✉️ メッセージをキューイング</b></summary>
+<details><summary><b>📦 MQにプッシュ</b></summary>
 
 ```bash
-# キューの一覧を表示
-$ aws sqs list-queues --endpoint-url http://localhost:4566
-
-# メッセージを作成
-$ aws sqs send-message \
-    --queue-url http://localhost:4566/000000000000/financial-market \
-    --endpoint-url http://localhost:4566 \
-    --message-body '{
-    "notification_id": 1, 
-    "event": {
-      "isin_code": "JP90C000GKC6", 
-      "ita_code": "03311187",  
-      "name": "eMAXIS Slim米国株式(S&P500)",
-      "asset_type": "STOCK", 
-      "management_type": "INDEX", 
-      "destination": "NORTH_AMERICA", 
-      "trade_types": [
-        "NISA_TSUMITATE", 
-        "NISA_SEITYOU", 
-        "OPEN_END"
-      ]
-    },
-    "occurred_on": "2024-03-05 15:19:24", 
-    "event_type": "ProductCrawled.1", 
-    "version": 1,
-    "producer_name": "epic-crawler"
-  }
-'
-
-# キューイングされたメッセージを表示
-$ aws sqs receive-message \
-    --queue-url http://localhost:4566/000000000000/financial-market \
-    --endpoint-url http://localhost:4566
+gcloud pubsub topics publish subscriber-topic --message "{\"publisher_name\": \"api-gateway\", \"event_type\": \"health_check\", \"greeting\": \"こんにちは\"}"
 ```
 
 </details>
 
 <details><summary><b>🗄️ ローカルDBに接続する</b></summary>
 
-|   データベース   | 保存しているデータ                               | 接続コマンド                                                                        |
-|:----------:|:----------------------------------------|:------------------------------------------------------------------------------|
-|   Redis    | ログイン時に発行されるアクセストークン、リフレッシュトークンを保存しています。 | `redis-cli -p 6379`                                                           | 
-| PostgreSQL | 万が一 KVS のデータが失われた時に復元できるようにするためのデータ     | <pre>mysql -h 127.0.0.1 -P 3306 -u user -p <br /># Enter password: pass</pre> |
+| データベース | 保存しているデータ                                                                                    | 接続コマンド                                                                        |
+|:------:|:---------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------|
+| Redis  | ログイン時に発行されるアクセストークン、リフレッシュトークンを保存しています。                                                      | `redis-cli -p 6379`                                                           | 
+| MySQL  | ・ユーザーの積立金額やお気に入り投信信託、ニュースデータ、掲示板などのデータ<br>・投信信託のリターン値やリスク値などのファンドや日経平均株価などのインデックス、その他金融市場データ | <pre>mysql -h 127.0.0.1 -P 3306 -u user -p <br /># Enter password: pass</pre> |
 
 </details>
 
 <details><summary><b>🔌 OpenAPI から TypeScript のクライアントコードを生成する</b></summary>
 
 ```bash
+cd frontend
 npm run generate-client
 ```
 
@@ -75,7 +46,7 @@ npm run generate-client
 バックエンド(FastAPI)のテストを実行する場合は、下記のコマンドを実行してください。
 ```bash
 # テスト実行に必要なライブラリをインストール
-pip install -r test/requirements.txt
+pip install -r backend/requirements.test.txt
 
 # テストを実行
 pytest -v ./test
@@ -87,7 +58,7 @@ pytest -v ./test
 
 事前に [Google Cloud のコンソール画面](https://console.cloud.google.com/welcome) にてプロジェクトを作成してください。プロジェクトを作成したら、以下の作業を行なってください。
 
-- `infrastructure/terraform/production.tfvars` に情報を記載してください。
+- `infrastructure/terraform/gcp/environments/production/terraform.tfvars` に情報を記載してください。
 - [お支払い画面](https://console.cloud.google.com/billing/linkedaccount) にて請求先アカウントをリンクしてください。
 
 システムを構築するにあたり、ローカル PC にて Google 認証を完了させてください。
@@ -104,18 +75,19 @@ gcloud config set project {PROJECT_ID}
 
 最後に Terraform を実行し、システムを構築してください。
 ```bash
-cd ./infrastructure/terraform
+# 適切な環境フォルダを選択してください
+cd ./infrastructure/terraform/gcp/environments/production
 
 terraform init  # 初めて実行する場合のみ初期化する
+terraform plan  # 定義内容のチェック
 
-terraform plan -var-file=production.tfvars  # 定義内容のチェック
-
-terraform apply -auto-approve -var-file=production.tfvars  # インフラを構築
-
-terraform destroy  # インフラを破壊
+terraform apply -auto-approve  # インフラを構築
 ```
 
-</details>
+システムを削除する場合は以下のコマンドを実行してください。
+```bash
+terraform destroy
+```
 
 </details>
 
@@ -126,10 +98,10 @@ terraform destroy  # インフラを破壊
 - ⚡️ フレームワーク: [FastAPI](https://fastapi.tiangolo.com/)
 - ✍️ 設計手法: [DDD(ドメイン駆動設計)](https://amzn.to/4gjk6AQ)
 - 🧰 ライブラリ:
-    - 💾 [SQLAlchemy](https://www.sqlalchemy.org/) : Python SQL DataBase interactions (ORM).
-    - ✅ [PyTest](https://docs.pytest.org/en/stable/) : Python test.
-    - 🔈️ [slf4py](https://pypi.org/project/slf4py/) : Logging.
-    - 🔀 [di4injector](https://pypi.org/project/di4injector/) : DI injection.
+  - 💾 [SQLAlchemy](https://www.sqlalchemy.org/) : Python SQL DataBase interactions (ORM).
+  - ✅ [PyTest](https://docs.pytest.org/en/stable/) : Python test.
+  - 🔈️ [slf4py](https://pypi.org/project/slf4py/) : Logging.
+  - 🔀 [di4injector](https://pypi.org/project/di4injector/) : DI injection.
 - 💾️ DB: MySQL / Redis
 - 🔌 クライアント連携: RESTful API
 - 🚀 CI: [GitHub Actions](https://docs.github.com/ja/actions)
@@ -137,11 +109,22 @@ terraform destroy  # インフラを破壊
 
 </details>
 
+<details><summary><b>🔧 フロントエンド</b></summary>
+
+- ⚙️ 開発言語: TypeScript
+- ⚡️ フレームワーク: [Next.js 14 App Router](https://nextjs.org/docs)
+- 🧰 ライブラリ:
+  - 🔐 [Auth.js(NextAuth.js V5)](https://authjs.dev/)
+- 🎨 CSS: [Tailwind](https://tailwindcss.com/) / [shadcn/ui](https://ui.shadcn.com/) / [Headless UI](https://headlessui.com/)
+- 🚀 CI: [GitHub Actions](https://docs.github.com/ja/actions)
+
+</details>
+
 <details><summary><b>☁️ インフラ</b></summary>
 
 - ☁️ クラウドサービス:
-    - Compute: GCP Cloud Run
-    - DB: [Neon](https://neon.tech/) / [Upstash](https://upstash.com/)
+  - Compute: GCP Cloud Run
+  - DB: [Neon](https://neon.tech/) / [Upstash](https://upstash.com/)
 - 🌍️ IaC: [Terraform](https://www.terraform.io/)
 - 🐋 DevOps: [Docker Compose](https://www.docker.com)
 - 🚨 エラー/ログ監視ツール: [Sentry](https://sentry.io/welcome/) / [New Relic](https://newrelic.com/jp)

@@ -67,13 +67,11 @@ class AuthorizationApplicationService:
 
         if not user:
             # ユーザーが存在しない場合は、ユーザーを新規作成する
-            user = User.provision(
-                self.user_repository.next_identity(),
-                profile.username,
-                profile.email_address,
-                None,
-                account
-            )
+            user = User.provision(self.user_repository.next_identity(),
+                                  profile.username,
+                                  profile.email_address,
+                                  None,
+                                  account)
 
         # すでにユーザーが存在する場合は、認証完了とする
         if not user.is_verified():

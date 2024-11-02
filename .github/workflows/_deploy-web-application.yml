@@ -1,0 +1,123 @@
+name: _deploy-subscriber
+
+on:
+  workflow_call:
+    inputs:
+      project-id:
+        description: 'Project ID'
+        type: string
+        required: true
+      region:
+        description: 'GCP region'
+        type: string
+        required: false
+        default: 'asia-northeast1'
+      workload-identity-provider:
+        description: 'Workload Identity プロバイダ'
+        type: string
+        required: true
+      github-actions-service-account:
+        description: 'GitHub Actions サービスアカウント'
+        type: string
+        required: true
+      docker-tag:
+        description: 'Docker タグ'
+        type: string
+        required: false
+      cloud-run-name:
+        description: 'Cloud Run Name'
+        type: string
+        required: true
+      cloud-run-service-account:
+        description: 'Cloud Run のサービスアカウント'
+        type: string
+        required: true
+      cloud-run-min-instances:
+        description: 'Cloud Run の最小インスタンス数'
+        type: number
+        required: false
+        default: 0
+      cloud-run-backend-env-vars:
+        description: 'Cloud Run で利用する環境変数. ex) ^@^KEY1=VALUE1@KEY2=@KEY3=VALUE2,VALUE3'
+        type: string
+        required: true
+      cloud-run-secrets:
+        description: 'Cloud Run で利用するシークレット値. ex) 環境変数名1=SECRET1:latest,環境変数名2=SECRET2:latest,'
+        type: string
+        required: false
+      cloud-sql-vpc-connector:
+        description: 'Cloud SQL に接続するための VPC コネクター'
+        type: string
+        required: false
+
+concurrency:
+  group: deploy-subscriber-${{ inputs.cloud-run-name }}-${{ inputs.env }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: '${{ inputs.cloud-run-name }} をデプロイ'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Google Cloud 認証
+        id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          workload_identity_provider: ${{ inputs.workload-identity-provider }}
+          service_account: ${{ inputs.github-actions-service-account }}
+      - name: gcloud CLI/SDK のセットアップ
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Docker 認証
+        run: gcloud auth configure-docker ${{ inputs.region }}-docker.pkg.dev
+      - name: Docker イメージのクリーンアップ
+        uses: 'docker://us-docker.pkg.dev/gcr-cleaner/gcr-cleaner/gcr-cleaner-cli'
+        continue-on-error: true  # 初回はDockerイメージがなくエラーになるため、エラーを無視する
+        with:
+          args: >-
+            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend
+            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend
+            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy
+            -tag-filter-any=.*
+
+      - name: Docker ファイルをビルド
+        run: |-
+          docker build ./backend -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}
+          docker build ./frontend -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend:${{ inputs.docker-tag || github.sha }}
+          docker build ./infrastructure/nginx -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}
+
+      - name: Docker イメージをプッシュ
+        run: |-
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend:${{ inputs.docker-tag || github.sha }}
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}
+
+      # Create Cloud Run YAML Service specification from template
+      # envsubst is replacing template variables and creating a YAML Service specification with the new image tag
+      - name: Cloud Run サービスを定義
+        run: |-
+          export NAME="${{ inputs.cloud-run-name }}"
+          export SERVICE_ACCOUNT="${{ inputs.cloud-run-service-account }}"
+          export BACKEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}"
+          export FRONTEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend:${{ inputs.docker-tag || github.sha }}"
+          export PROXY_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}"
+          export CLOUD_SQL_VPC_CONNECTOR="${{ inputs.cloud-sql-vpc-connector }}"
+          envsubst < ./.github/workflows/deploy-cloudrun/web-application.yaml > service.yaml
+
+      # Deploy Cloud Run Service from the YAML Service specification
+      - name: デプロイ
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ inputs.cloud-run-name }}
+          region: ${{ inputs.region }}
+          metadata: service.yaml
+          env_vars: |-
+
+          secrets: |-
+
+      - name: Cloud Run の URL を出力
+        run: echo ${{ steps.deploy.outputs.url }}

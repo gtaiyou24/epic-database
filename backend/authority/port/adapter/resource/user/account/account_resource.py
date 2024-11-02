@@ -6,7 +6,7 @@ from authority.application.identity import IdentityApplicationService
 from authority.application.identity.command import UnlinkAccountCommand, LinkAccountCommand
 from authority.port.adapter.resource.user.account.request import LinkAccountRequest, UnlinkAccountRequest
 from common.port.adapter.resource import APIResource
-from dependency import CurrentUser, GetCurrentUser
+from common.port.adapter.resource.dependency import CurrentUser, GetCurrentUser
 
 
 class AccountResource(APIResource):

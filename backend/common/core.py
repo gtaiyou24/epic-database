@@ -8,6 +8,12 @@ from redis import StrictRedis
 from sqlalchemy import create_engine, Engine
 
 from common.application import UnitOfWork
+from common.event import EventStore
+from common.notification import PublishedNotificationTrackerStore
+from common.port.adapter.messaging import ExchangeListener, MessagePublisher
+from common.port.adapter.messaging.stub import MessagePublisherStub
+from common.port.adapter.persistence.event.inmem import InMemEventStore
+from common.port.adapter.persistence.notification.inmem import InMemPublishedNotificationTrackerStore
 from common.port.adapter.persistence.repository.inmem import InMemUnitOfWork
 from common.port.adapter.persistence.repository.mysql import MySQLUnitOfWork, DataBase
 from common.port.adapter.persistence.repository.redis import RedisUnitOfWork
@@ -31,6 +37,12 @@ class AppModule(abc.ABC):
         """ルーティングを定義"""
         pass
 
+    @property
+    @abc.abstractmethod
+    def subscribers(self) -> set[ExchangeListener]:
+        """サブスクライバーを定義"""
+        pass
+
 
 class Common(AppModule):
     @override
@@ -49,7 +61,14 @@ class Common(AppModule):
                 port=os.getenv('REDIS_PORT'),
                 db=0,
                 protocol=3,  # PESP3
-                decode_responses=True))
+                decode_responses=True)),
+            DI.of(EventStore, {"InMem": InMemEventStore}, InMemEventStore),
+            DI.of(PublishedNotificationTrackerStore,
+                  {"InMem": InMemPublishedNotificationTrackerStore},
+                  InMemPublishedNotificationTrackerStore),
+            DI.of(MessagePublisher,
+                  {"Stub": MessagePublisherStub},
+                  InMemPublishedNotificationTrackerStore),
         )
 
     @override
@@ -60,3 +79,8 @@ class Common(AppModule):
     @property
     def router(self) -> APIRouter:
         raise NotImplementedError("CommonモジュールにはAPI Routerがありません。")
+
+    @override
+    @property
+    def subscribers(self) -> set[ExchangeListener]:
+        return set()

@@ -9,7 +9,7 @@ from authority.port.adapter.resource.user.request import ForgotPasswordRequest, 
 from authority.port.adapter.resource.user.response import UserJson
 
 from common.port.adapter.resource import APIResource
-from dependency import GetCurrentUser, CurrentUser
+from common.port.adapter.resource.dependency import GetCurrentUser, CurrentUser
 
 
 class UserResource(APIResource):

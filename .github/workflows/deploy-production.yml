@@ -11,9 +11,9 @@ on:
         default: all
         options:
           - all
-          - api
+          - web
+          - subscriber
           - batch
-          - consumer
       approval:
         description: 'type deploy/production'
         required: true
@@ -38,20 +38,37 @@ jobs:
     with:
       python-version: '3.12'
 
-  deploy-api:
-    if: ${{ (github.event.inputs.deploy_to == 'all') || (github.event.inputs.deploy_to == 'api') }}
+  deploy-web:
+    if: ${{ (github.event.inputs.deploy_to == 'all') || (github.event.inputs.deploy_to == 'web') }}
     needs: test
     name: '🚀 デプロイ'
-    uses: ./.github/workflows/_deploy-to-cloud-run.yml
+    uses: ./.github/workflows/_deploy-web-application.yml
     with:
-      project-id: 'epic-database-439005'
-      workload-identity-provider: 'projects/917173493008/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
-      service-account: 'github-actions@epic-database-439005.iam.gserviceaccount.com'
-      registry: 'epic-database'
-      cloud-run-name: 'epic-database'
-      cloud-run-service-account: 'cloud-run-service-account@epic-database-439005.iam.gserviceaccount.com'
-      cloud-run-min-instances: 0
-      env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
-      secrets: ""
+      project-id: 'toushire-85943'
       region: 'asia-northeast1'
-      cleanup-images: true
+      workload-identity-provider: 'projects/647053381633/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
+      github-actions-service-account: 'github-actions@toushire-85943.iam.gserviceaccount.com'
+      cloud-run-name: 'web-application'
+      cloud-run-service-account: 'web-application@toushire-85943.iam.gserviceaccount.com'
+      cloud-run-min-instances: 0
+      cloud-run-backend-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
+      cloud-run-secrets: ""
+      cloud-sql-vpc-connector: "projects/toushire-85943/locations/asia-northeast1/connectors/application-db-vpc-con"
+#      cleanup-images: true
+
+  deploy-subscriber:
+    if: ${{ (github.event.inputs.deploy_to == 'all') || (github.event.inputs.deploy_to == 'subscriber') }}
+    needs: test
+    name: '🚀 デプロイ'
+    uses: ./.github/workflows/_deploy-subscriber.yml
+    with:
+      project-id: 'toushire-85943'
+      region: 'asia-northeast1'
+      workload-identity-provider: 'projects/647053381633/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
+      github-actions-service-account: 'github-actions@toushire-85943.iam.gserviceaccount.com'
+      cloud-run-name: 'subscriber'
+      cloud-run-service-account: 'subscriber@toushire-85943.iam.gserviceaccount.com'
+      cloud-run-min-instances: 0
+      cloud-run-port: 8000
+      cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
+#      cloud-run-secrets: ""
