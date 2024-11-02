@@ -2,11 +2,11 @@ from httpx import Response
 
 from fastapi.testclient import TestClient
 
-from backend import main
+import api
 
 
 class Test_ヘルスチェックAPI:
-    client = TestClient(app=main.app)
+    client = TestClient(app=api.app)
 
     def test_ヘルスチェックが確認できる(self):
         r: Response = self.client.get("/health/check")

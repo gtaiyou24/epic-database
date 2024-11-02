@@ -1,17 +1,17 @@
 services:
-  # App
-  app:
+  # FastAPI
+  api:
     build:
-      context: .
+      context: ./backend/app
       dockerfile: Dockerfile
-    container_name: epic-database
+    container_name: epic-database-api
     env_file:
-      - .env.local
-      #- .env
+      - ./backend/app/.env.local
+      #- ./backend/app/.env
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app/
+      - ./backend/app:/app/
     command: "--reload"
     depends_on:
       mysql:
@@ -30,7 +30,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=user
       - MYSQL_PASSWORD=pass
-      - MYSQL_DATABASE=epic-database
+      - MYSQL_DATABASE=epicdatabase
       - TZ=Asia/Tokyo
     ports:
       - "3306:3306"
@@ -54,7 +54,7 @@ services:
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
-      - POSTGRES_DB=epic-database
+      - POSTGRES_DB=epicdatabase
       - TZ=Asia/Tokyo
     ports:
       - "5432:5432"

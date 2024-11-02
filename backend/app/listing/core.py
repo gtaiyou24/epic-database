@@ -25,7 +25,7 @@ class Listing(AppModule):
     @override
     @property
     def router(self) -> APIRouter:
-        router = APIRouter(tags=["Data Mart"])
+        router = APIRouter(tags=["Listing"])
         router.include_router(MartResource().router)
         return router
 

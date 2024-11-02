@@ -4,7 +4,6 @@ ENV TZ=Asia/Tokyo
 
 ARG project_dir=/app/
 COPY . $project_dir
-COPY ./requirements.txt $project_dir
 WORKDIR $project_dir
 
 RUN apt-get update -y \

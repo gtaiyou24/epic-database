@@ -70,9 +70,8 @@ app.add_middleware(PublishInternalTokenMiddleware)  # 内部通信用トーク�
 
 app.include_router(apigateway.router)
 app.include_router(authority.router)
-app.include_router(market.router)
+app.include_router(listing.router)
 app.include_router(payment.router)
-app.include_router(portfolio.router)
 
 
 @app.exception_handler(SystemException)

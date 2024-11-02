@@ -46,10 +46,10 @@ npm run generate-client
 バックエンド(FastAPI)のテストを実行する場合は、下記のコマンドを実行してください。
 ```bash
 # テスト実行に必要なライブラリをインストール
-pip install -r backend/requirements.test.txt
+pip install -r backend/test/requirements.txt
 
 # テストを実行
-pytest -v ./test
+pytest -v ./backend/test
 ```
 
 </details>
