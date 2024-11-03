@@ -11,7 +11,7 @@ from slf4py import create_logger
 from apigateway import apigateway
 from authority import authority
 from common import common
-from listing import listing
+from dataset import dataset
 from payment import payment
 from apigateway.middleware import MonitoringMiddleware, PublishInternalTokenMiddleware
 from common.exception import SystemException, ErrorCode
@@ -24,13 +24,13 @@ async def lifespan(app: FastAPI):
     common.startup()
     apigateway.startup()
     authority.startup()
-    listing.startup()
+    dataset.startup()
     payment.startup()
     yield
     common.shutdown()
     apigateway.shutdown()
     authority.shutdown()
-    listing.startup()
+    dataset.startup()
     payment.shutdown()
 
 app = FastAPI(
@@ -70,7 +70,7 @@ app.add_middleware(PublishInternalTokenMiddleware)  # 内部通信用トーク�
 
 app.include_router(apigateway.router)
 app.include_router(authority.router)
-app.include_router(listing.router)
+app.include_router(dataset.router)
 app.include_router(payment.router)
 
 

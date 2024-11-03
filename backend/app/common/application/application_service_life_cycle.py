@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import wraps
 from typing import override, Callable
+from xmlrpc.client import Fault
 
 from di import DIContainer
 from injector import singleton, inject
@@ -30,14 +31,15 @@ class ApplicationServiceLifeCycle:
     @inject
     def __init__(self,
                  unit_of_work: UnitOfWork,
-                 event_store: EventStore,
-                 notification_application_service: NotificationApplicationService):
+                 event_store: EventStore):
+        self.__is_listening = True
         self.__unit_of_work = unit_of_work
         self.__event_store = event_store
-        self.__notification_application_service = notification_application_service
+        self.__notification_application_service = DIContainer.instance().resolve(NotificationApplicationService)
 
     def begin(self, is_listening: bool = True) -> None:
-        if is_listening:
+        self.__is_listening = is_listening
+        if self.__is_listening:
             self.listen()
         self.__unit_of_work.start()
 
@@ -49,14 +51,15 @@ class ApplicationServiceLifeCycle:
     def success(self) -> None:
         self.__unit_of_work.commit()
         # TODO : コミット時に通知を発行するのではなく、別スレッドで発行するようにする
-        self.__notification_application_service.publish_notifications()
+        if self.__is_listening is True:
+            self.__notification_application_service.publish_notifications()
 
     def listen(self):
         DomainEventPublisher.instance().reset()
         DomainEventPublisher.instance().subscribe(DomainEventSubscriberImpl(self.__event_store))
 
 
-def transactional[T](is_listening: bool = True):
+def transactional[T](method: Callable[..., T] | None = None, is_listening: bool = True):
     def _transactional[T](method: Callable[..., T]):
         """AOPによるトランザクション管理を行うためのデコーダー"""
         @wraps(method)
@@ -72,7 +75,12 @@ def transactional[T](is_listening: bool = True):
                 application_life_cycle.fail(e)
 
         return handle_transaction
-    return _transactional
+
+    # @transactional もしくは @transactional() で呼び出したとき
+    if method is None:
+        return _transactional
+
+    return _transactional(method)
 
 
 # NOTE : 循環参照エラーを防ぐためにこちらに定義

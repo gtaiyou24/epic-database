@@ -9,9 +9,10 @@ from sqlalchemy import create_engine, Engine
 
 from common.application import UnitOfWork
 from common.event import EventStore
-from common.notification import PublishedNotificationTrackerStore
+from common.notification import PublishedNotificationTrackerStore, NotificationPublisher
 from common.port.adapter.messaging import ExchangeListener, MessagePublisher
 from common.port.adapter.messaging.stub import MessagePublisherStub
+from common.port.adapter.notification.notification_publisher_impl import NotificationPublisherImpl
 from common.port.adapter.persistence.event.inmem import InMemEventStore
 from common.port.adapter.persistence.notification.inmem import InMemPublishedNotificationTrackerStore
 from common.port.adapter.persistence.repository.inmem import InMemUnitOfWork
@@ -63,6 +64,7 @@ class Common(AppModule):
                 protocol=3,  # PESP3
                 decode_responses=True)),
             DI.of(EventStore, {"InMem": InMemEventStore}, InMemEventStore),
+            DI.of(NotificationPublisher, {}, NotificationPublisherImpl),
             DI.of(PublishedNotificationTrackerStore,
                   {"InMem": InMemPublishedNotificationTrackerStore},
                   InMemPublishedNotificationTrackerStore),

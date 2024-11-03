@@ -1,3 +1,5 @@
+from typing import override
+
 from injector import inject, singleton
 
 from common.event import EventStore
@@ -16,6 +18,7 @@ class NotificationPublisherImpl(NotificationPublisher):
         self.__event_store = event_store
         self.__message_publisher = message_publisher
 
+    @override
     def publish_notifications(self) -> None:
         """
         1. PublishedNotificationTrackerを取得する

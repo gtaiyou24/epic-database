@@ -19,5 +19,5 @@ class InMemTokenRepository(TokenRepository):
     @override
     def token_with_value(self, value: str) -> BearerToken | None:
         for token in self.tokens:
-            if token.value == value:
+            if token.address == value:
                 return token

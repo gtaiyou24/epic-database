@@ -44,8 +44,8 @@ class ErrorCode(Enum):
     USER_IS_NOT_VERIFIED = ("該当ユーザーの認証が完了していません。", ErrorLevel.WARN, HTTPStatus.FORBIDDEN)
     LINK_ACCOUNT_FAILURE = ("アカウントの連携に失敗しました", ErrorLevel.WARN, HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    # Market
-    MARKET_PRODUCT_NOT_FOUND = ("金融商品が見つかりません。", ErrorLevel.WARN, HTTPStatus.NOT_FOUND)
+    # DataSet
+    COMPANY_NOT_FOUND = ("企業が見つかりません。", ErrorLevel.WARN, HTTPStatus.NOT_FOUND)
 
     def __init__(self, message: str, error_level: ErrorLevel, http_status: HTTPStatus):
         self.message = message

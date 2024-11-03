@@ -9,7 +9,7 @@ from authority import authority
 from common import common
 from common.port.adapter.messaging.pubsub import PushSubscriber
 from common.port.adapter.resource.error import ErrorJson
-from listing import listing
+from dataset import dataset
 from payment import payment
 
 
@@ -19,13 +19,13 @@ async def lifespan(app: FastAPI):
     common.startup()
     apigateway.startup()
     authority.startup()
-    listing.startup()
+    dataset.startup()
     payment.startup()
     yield
     common.shutdown()
     apigateway.shutdown()
     authority.shutdown()
-    listing.shutdown()
+    dataset.shutdown()
     payment.shutdown()
 
 
@@ -56,7 +56,7 @@ app = FastAPI(
 async def receive(request: Request):
     """Receive and parse Pub/Sub messages."""
     all_subscribers = set()
-    for module in [common, apigateway, authority, listing, payment]:
+    for module in [common, apigateway, authority, dataset, payment]:
         for subscriber in module.subscribers:
             all_subscribers.add(subscriber)
 
