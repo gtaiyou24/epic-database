@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from common.port.adapter.resource import APIResource
-from listing.port.adapter.resource.mart.dataset.response import DataJson
+from listing.port.adapter.resource.dataset.response import DataJson
 
 
 class DatasetResource(APIResource):

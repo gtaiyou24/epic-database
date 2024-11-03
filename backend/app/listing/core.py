@@ -8,7 +8,7 @@ from common.port.adapter.messaging import ExchangeListener
 from listing.domain.model.company import CompanyRepository
 from listing.port.adapter.persistence.repository.inmem import InMemCompanyRepository
 from listing.port.adapter.persistence.repository.mysql.company import MySQLCompanyRepository
-from listing.port.adapter.resource.mart import MartResource
+from listing.port.adapter.resource.dataset import CompanyResource
 
 
 class Listing(AppModule):
@@ -26,7 +26,8 @@ class Listing(AppModule):
     @property
     def router(self) -> APIRouter:
         router = APIRouter(tags=["Listing"])
-        router.include_router(MartResource().router)
+        # router.include_router(DatasetResource().router)
+        router.include_router(CompanyResource().router)
         return router
 
     @override

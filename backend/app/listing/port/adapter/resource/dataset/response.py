@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Literal, Union
 
 from pydantic import BaseModel, Field, RootModel
 
@@ -12,7 +12,7 @@ class DataJson(RootModel[Dict[str, Any]]):
 class CompanyJson(BaseModel):
     """企業情報"""
     class ContactPoint(BaseModel):
-        contact_type: str | None = Field(title="問合せ用途", examples=["カスタマーサポート"])
+        pass
 
     class Telephone(ContactPoint):
         telephone: str = Field(title="電話番号")
@@ -41,12 +41,29 @@ class CompanyJson(BaseModel):
     fiscal_year_end: int = Field(title="決算月", examples=[3])
     capital: int = Field(title="資本金", examples=[248144000000])
     sales: int = Field(title="売上高", examples=[1814663000000])
-    employees: int = Field(title="従業員数", examples=[1000])
-    telephone: str = Field(title="電話番号")
-    fax_number: str = Field(title="FAX番号")
-    contact_points: list[ContactPoint] = Field(title="問合せ情報", default=[])
-    offices: list[Address] = Field(title="事業所/オフィス", default=[])
-    same_as: list[str] = Field(title="関連サイトやSNS", default=[])
+    employees: int = Field(title="従業員数", examples=[11176])
+    contact_points: list[ContactPoint] = Field(
+        title="問合せ情報",
+        examples=[[
+            URL(url='https://www.lycorp.co.jp/ja/contact/'),
+            Telephone(telephone='03-6779-4900')
+        ]],
+        default=[]
+    )
+    offices: list[Address] = Field(
+        title="事業所/オフィス",
+        examples=[[
+            {
+                'country': 'JP',
+                'postal_code': 1028282,
+                'prefecture': '東京都',
+                'city': '千代田区',
+                'street': '紀尾井町1-3 東京ガーデンテラス紀尾井町 紀尾井タワー'
+            }
+        ]],
+        default=[]
+    )
+    same_as: list[str] = Field(title="関連サイトやSNS", examples=[['https://www.lycorp.co.jp/ja/']], default=[])
 
     # 子会社(subsidiaries)
     # 業界(大業界・小業界)
