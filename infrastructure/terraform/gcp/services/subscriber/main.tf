@@ -116,10 +116,10 @@ locals {
       schedule    = "0 * * * *"
       body        = "{\"publisher_name\": \"api-gateway\", \"event_type\": \"HealthCheck.1\", \"greeting\": \"こんにちは\"}"
     },
-    "calculate_all_product_metrics" = {
-      description = "全金融商品の指標を計算する"
-      schedule    = "0 1 * * 1"    # 毎週月曜の1時に起動
-      body        = "{\"publisher_name\": \"market\", \"event_type\": \"CalculateAllProductMetrics.1\"}"
+    "download_gbizinfo" = {
+      description = "gBizINFO から法人データをダウンロードする"
+      schedule    = "23 01 1 * *"    # 毎月の*月1日の1時23分にクローン起動を設定する。
+      body        = "{\"publisher_name\": \"scheduler\", \"event_type\": \"DownloadgBizINFO.1\"}"
     }
     // ジョブを追記する
   }
