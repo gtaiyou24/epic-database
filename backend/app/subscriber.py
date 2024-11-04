@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from pydantic import BaseModel, Field
 from starlette import status
 from starlette.requests import Request
 
@@ -8,7 +9,9 @@ from apigateway import apigateway
 from authority import authority
 from common import common
 from common.port.adapter.messaging.pubsub import PushSubscriber
+from common.port.adapter.messaging.pubsub.json import MessageJson
 from common.port.adapter.resource.error import ErrorJson
+from crawler import crawler
 from dataset import dataset
 from payment import payment
 
@@ -19,12 +22,14 @@ async def lifespan(app: FastAPI):
     common.startup()
     apigateway.startup()
     authority.startup()
+    crawler.startup()
     dataset.startup()
     payment.startup()
     yield
     common.shutdown()
     apigateway.shutdown()
     authority.shutdown()
+    crawler.shutdown()
     dataset.shutdown()
     payment.shutdown()
 
@@ -53,10 +58,10 @@ app = FastAPI(
 
 
 @app.post("/", status_code=status.HTTP_204_NO_CONTENT)
-async def receive(request: Request):
+async def receive(request: MessageJson):
     """Receive and parse Pub/Sub messages."""
     all_subscribers = set()
-    for module in [common, apigateway, authority, dataset, payment]:
+    for module in [common, apigateway, authority, crawler, dataset, payment]:
         for subscriber in module.subscribers:
             all_subscribers.add(subscriber)
 

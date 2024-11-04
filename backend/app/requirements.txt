@@ -15,6 +15,7 @@ mysqlclient==2.2.4      # MySQL
 psycopg2-binary==2.9.9  # Postgresql
 psycopg2==2.9.9         # Postgresql
 redis[hiredis]          # Redis
+tqdm==4.66.6            # Progress
 
 # Common
 google-cloud-pubsub==2.26.1

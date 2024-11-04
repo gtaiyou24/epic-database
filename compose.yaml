@@ -13,7 +13,37 @@ services:
     volumes:
       - ./backend/app:/app/
     command: "--reload"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -XGET http://localhost:8000/health/check || exit 1"]
+      interval: 60s
+      timeout: 20s
+      retries: 3
+      start_period: 30s
     depends_on:
+      mysql:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # FastAPI
+  subscriber:
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile.subscriber
+    container_name: epic-database-subscriber
+    env_file:
+      - ./backend/app/.env.local
+      #- ./backend/app/.env
+    volumes:
+      - ./backend/app:/app/
+    ports:
+      - "8001:8000"
+    command: "--reload"
+    depends_on:
+      api:
+        condition: service_healthy
       mysql:
         condition: service_healthy
       postgresql:

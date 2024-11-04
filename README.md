@@ -15,6 +15,23 @@ docker-compose up --build
 
 <details><summary><b>📦 MQにプッシュ</b></summary>
 
+**Local**
+```bash
+# パイプラインを繋げて実行する
+echo '{"publisher_name": "scheduler", "event_type": "DownloadgBizINFO.1"}' | \
+base64 | \
+xargs -I {} curl -XPOST "http://localhost:8001/" -H "Content-Type: application/json" -d '{"message": {"data": "{}"}}'
+
+
+# 1行で実行する
+curl -XPOST "http://localhost:8001/" -H "Content-Type: application/json" -d '{
+  "message": {
+    "data": "'"$(echo '{"publisher_name": "scheduler", "event_type": "DownloadgBizINFO.1"}' | base64)"'"
+  }
+}'
+```
+
+**GCP**
 ```bash
 gcloud pubsub topics publish subscriber-topic --message "{\"publisher_name\": \"api-gateway\", \"event_type\": \"health_check\", \"greeting\": \"こんにちは\"}"
 ```

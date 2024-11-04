@@ -44,6 +44,9 @@ class ErrorCode(Enum):
     USER_IS_NOT_VERIFIED = ("該当ユーザーの認証が完了していません。", ErrorLevel.WARN, HTTPStatus.FORBIDDEN)
     LINK_ACCOUNT_FAILURE = ("アカウントの連携に失敗しました", ErrorLevel.WARN, HTTPStatus.INTERNAL_SERVER_ERROR)
 
+    # Crawler
+    DOWNLOAD_DATA_FAILED = ("データのダウンロードに失敗しました", ErrorLevel.WARN, HTTPStatus.INTERNAL_SERVER_ERROR)
+
     # DataSet
     COMPANY_NOT_FOUND = ("企業が見つかりません。", ErrorLevel.WARN, HTTPStatus.NOT_FOUND)
 
