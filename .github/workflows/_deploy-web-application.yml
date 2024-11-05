@@ -85,13 +85,13 @@ jobs:
 
       - name: Docker ファイルをビルド
         run: |-
-          docker build ./backend/app -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}
-          docker build ./infrastructure/nginx -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}
+          docker build ./backend/app -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}
+          docker build ./infrastructure/nginx -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}
 
       - name: Docker イメージをプッシュ
         run: |-
-          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}
-          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}
 
       # Create Cloud Run YAML Service specification from template
       # envsubst is replacing template variables and creating a YAML Service specification with the new image tag
@@ -99,8 +99,8 @@ jobs:
         run: |-
           export NAME="${{ inputs.cloud-run-name }}"
           export SERVICE_ACCOUNT="${{ inputs.cloud-run-service-account }}"
-          export BACKEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend:${{ inputs.docker-tag || github.sha }}"
-          export PROXY_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy:${{ inputs.docker-tag || github.sha }}"
+          export BACKEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}"
+          export PROXY_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}"
           export CLOUD_SQL_VPC_CONNECTOR="${{ inputs.cloud-sql-vpc-connector }}"
           envsubst < ./.github/workflows/deploy-cloudrun/web-application.yaml > service.yaml
 
