@@ -17,7 +17,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
   provider = google-beta
   project = var.project_id
 
-  name = "${var.domain}-cert"
+  name = "domain-cert"
   managed {
     domains = ["${var.domain}"]
   }
@@ -79,7 +79,7 @@ resource "google_compute_url_map" "alb_url_map" {
 
   host_rule {
     hosts = ["*"]
-    path_matcher = ""
+    path_matcher = "all"
   }
   path_matcher {
     name = "all"
@@ -134,7 +134,7 @@ resource "google_compute_global_forwarding_rule" "alb_rule" {
 
 # 🚫 HTTP から HTTPS にリダイレクト
 resource "google_compute_url_map" "https_redirect" {
-  name            = "${var.domain}-https-redirect"
+  name = "https-redirect"
 
   default_url_redirect {
     https_redirect         = true
@@ -143,11 +143,11 @@ resource "google_compute_url_map" "https_redirect" {
   }
 }
 resource "google_compute_target_http_proxy" "https_redirect" {
-  name   = "${var.domain}-http-proxy"
-  url_map          = google_compute_url_map.https_redirect.id
+  name    = "http-proxy"
+  url_map = google_compute_url_map.https_redirect.id
 }
 resource "google_compute_global_forwarding_rule" "https_redirect" {
-  name   = "${var.domain}-fwdrule-http"
+  name   = "fwdrule-http"
   target = google_compute_target_http_proxy.https_redirect.id
   port_range = "80"
   ip_address = google_compute_global_address.alb_ip.address
