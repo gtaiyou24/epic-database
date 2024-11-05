@@ -50,16 +50,16 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
-        - name: frontend
-          image: ${FRONTEND_IMAGE}
-          startupProbe:
-            httpGet:
-              path: /api/health/check
-              port: 3000
-            failureThreshold: 5
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 2
+#        - name: frontend
+#          image: ${FRONTEND_IMAGE}
+#          startupProbe:
+#            httpGet:
+#              path: /api/health/check
+#              port: 3000
+#            failureThreshold: 5
+#            periodSeconds: 10
+#            successThreshold: 1
+#            timeoutSeconds: 2
       vpcAccess:  # Cloud SQL に接続する VPC コネクタ
         connector: ${CLOUD_SQL_VPC_CONNECTOR}
         egress: "ALL_TRAFFIC"
