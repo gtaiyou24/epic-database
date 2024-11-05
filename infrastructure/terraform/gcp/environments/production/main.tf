@@ -75,7 +75,7 @@ module "load_balancing" {
   source = "../../services/load-balancing"
   project_id = var.project_id
   region = var.region
-  domain = "toushire.com"
+  domain = var.domain
   web_application_cloud_run_name = module.web_application.name
   public_bucket_name = module.storage.public_bucket_name
 

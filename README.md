@@ -5,7 +5,7 @@
 </a>
 
 ## 📚 使い方
-<details><summary><b>🏃 起動する</b></summary>
+<details><summary><b>🚀 起動する</b></summary>
 
 ```bash
 docker-compose up --build

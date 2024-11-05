@@ -15,6 +15,7 @@ resource "google_compute_global_address" "alb_ip" {
 # Google が発行および更新するマネージド SSL 証明書を作成
 resource "google_compute_managed_ssl_certificate" "default" {
   provider = google-beta
+  project = var.project_id
 
   name = "${var.domain}-cert"
   managed {
