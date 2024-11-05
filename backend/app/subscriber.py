@@ -1,9 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
 from starlette import status
-from starlette.requests import Request
 
 from apigateway import apigateway
 from authority import authority

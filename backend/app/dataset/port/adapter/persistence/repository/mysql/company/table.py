@@ -156,7 +156,7 @@ class CompaniesTableRow(DataBase):
     homepage: Mapped[str] = mapped_column(TEXT, nullable=True, comment="ホームページURL")
 
     related_pages: Mapped[list[CompanyRelatedPagesTableRow]] = relationship(back_populates="company", lazy='joined')
-    summaries: Mapped[CompanySummariesTableRow] = relationship(back_populates="company", lazy='joined', uselist=False) # 1対1
+    summaries: Mapped[CompanySummariesTableRow] = relationship(back_populates="company", lazy='joined', uselist=False)
     contact_points: Mapped[list[CompanyContactPointsTableRow]] = relationship(back_populates="company", lazy='joined')
     offices: Mapped[list[CompanyOfficesTableRow]] = relationship(back_populates="company", lazy='joined')
 

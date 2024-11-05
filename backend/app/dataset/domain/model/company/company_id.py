@@ -66,7 +66,6 @@ class CompanyId:
             return id is not None
         return id.value == value
 
-
     def set_other_id(self, other_id: CompanyId) -> CompanyId:
         if self.contains(other_id.type):
             raise ValueError(f'すでに {other_id.type.name} がセットされています。')

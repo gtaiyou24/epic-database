@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, RootModel
 
 
 class DataJson(RootModel[Dict[str, Any]]):

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from functools import wraps
 from typing import override, Callable
-from xmlrpc.client import Fault
 
 from di import DIContainer
 from injector import singleton, inject

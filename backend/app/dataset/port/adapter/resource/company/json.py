@@ -83,7 +83,7 @@ class CompanyJson(BaseModel):
             founded_at=dpo.company.founded_at,
             homepage=dpo.company.homepage.address,
             same_as=[url.address for url in dpo.company.same_as],
-            summaries={summary.name.value:summary.value for summary in dpo.company.summaries},
+            summaries={summary.name.value: summary.value for summary in dpo.company.summaries},
             contact_points=[
                 CompanyJson.ContactPoint.from_(contact_point) for contact_point in dpo.company.contact_points
             ],

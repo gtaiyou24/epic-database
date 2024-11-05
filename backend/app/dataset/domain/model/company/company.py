@@ -15,7 +15,7 @@ class Company:
     # TODO: 業界(大業界・小業界)
     founded_at: date
     homepage: URL  # ホームページURL
-    same_as: list[URL] # 関連サイトやSNS
+    same_as: list[URL]  # 関連サイトやSNS
     summaries: set[Summary]  # その他企業情報
     contact_points: set[ContactPoint]  # 企業への問い合わせ情報
     offices: set[Address]  # 事業所 / オフィス

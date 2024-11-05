@@ -3,7 +3,6 @@ import json
 
 from fastapi import HTTPException
 from slf4py import set_logger
-from fastapi.requests import Request
 
 from common.port.adapter.messaging import ExchangeListener
 from common.port.adapter.messaging.pubsub.json import MessageJson

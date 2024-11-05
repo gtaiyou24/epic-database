@@ -30,7 +30,8 @@ class DriverManagerCompany:
             query: Query[CompaniesTableRow] = q.query(CompaniesTableRow)
 
             uuids = [id.type_of(CompanyId.Type.UUID).value for id in company_id if id.type_of(CompanyId.Type.UUID)]
-            corporate_numbers = [id.type_of(CompanyId.Type.JCN).value for id in company_id if id.type_of(CompanyId.Type.JCN)]
+            corporate_numbers = [
+                id.type_of(CompanyId.Type.JCN).value for id in company_id if id.type_of(CompanyId.Type.JCN)]
 
             table_rows: list[CompaniesTableRow] = query.filter(or_(
                 CompaniesTableRow.id.in_(uuids),
@@ -59,7 +60,9 @@ class DriverManagerCompany:
         self.__unit_of_work.persist(CompaniesTableRow.create(company))
 
     def update(self, company: Company) -> None:
-        optional: CompaniesTableRow | None = self.__unit_of_work.session().query(CompaniesTableRow).get(company.id.value)
+        optional: CompaniesTableRow | None = self.__unit_of_work.session()\
+            .query(CompaniesTableRow)\
+            .get(company.id.value)
         if optional is None:
             raise Exception(f'{CompaniesTableRow.__tablename__}.{company.id.value} が存在しないため、更新できません。')
 
@@ -72,7 +75,9 @@ class DriverManagerCompany:
         optional.update(company)
 
     def delete(self, company: Company) -> None:
-        optional: CompaniesTableRow | None = self.__unit_of_work.session().query(CompaniesTableRow).get(company.id.value)
+        optional: CompaniesTableRow | None = self.__unit_of_work.session()\
+            .query(CompaniesTableRow)\
+            .get(company.id.value)
         if optional is None:
             return None
 

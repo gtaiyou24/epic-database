@@ -22,7 +22,7 @@ class HojinInfoJson(TypedDict):
     postal_code: str | None  # 郵便番号
     location: str | None  # 本社所在地(都道府県+市町村+番地/建物)
     representative_position: str | None  # 法人代表者役職
-    representative_name: str | None # 法人代表者名
+    representative_name: str | None  # 法人代表者名
 
     founding_year: int | None  # 創業年
     date_of_establishment: date | None  # 設立年月日
@@ -33,7 +33,8 @@ class HojinInfoJson(TypedDict):
     company_size_male: int | None  # 従業員数の内、男性が占める人数
     company_url: str | None  # 企業ホームページ
 
-    close_cause: Literal["01", "11", "21", "31"] | None  # 登記記録の閉鎖等の事由(01: 清算の結了, 11: 合併による解散, 21: 登記官による閉鎖, 31: その他の清算の結了)
+    # 登記記録の閉鎖等の事由(01: 清算の結了, 11: 合併による解散, 21: 登記官による閉鎖, 31: その他の清算の結了)
+    close_cause: Literal["01", "11", "21", "31"] | None
     close_date: date | None  # 登記記録の閉鎖等年月日
     status: Literal["閉鎖", "-"]  # ステータス
     update_date: datetime  # 最終更新日
@@ -61,7 +62,7 @@ class DownloadGBizINFOListener(ExchangeListener):
         )
         if not response.ok:
             raise SystemException(
-                ErrorCode.DOWNLOAD_DATA_FAILED, f"gBizINFO から法人データをダウンロードするのに失敗しました")
+                ErrorCode.DOWNLOAD_DATA_FAILED, "gBizINFO から法人データをダウンロードするのに失敗しました")
 
         self.log.debug("ダウンロード完了!")
 

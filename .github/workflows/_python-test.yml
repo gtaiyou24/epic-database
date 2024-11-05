@@ -23,9 +23,9 @@ jobs:
             python-version: ${{ inputs.python-version }}
         - name: Run Python Test
           run: |
-            pip install -r ./backend/requirements.txt
-            pip install -r ./test/requirements.txt
-            pytest ./test
+            pip install -r ./backend/app/requirements.txt
+            pip install -r ./backend/test/requirements.txt
+            pytest ./backend/test
 
 # NOTE: pytest ./test/unit を実行すると循環参照エラーが発生するため、上記のジョブに変更
 

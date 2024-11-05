@@ -32,7 +32,7 @@ class CompanyResource(APIResource):
     def search(self, name: str):
         pass
 
-    def save(self, request: CompanyJson, _ = Depends(AuthenticateAdminUser())) -> CompanyJson:
+    def save(self, request: CompanyJson, _=Depends(AuthenticateAdminUser())) -> CompanyJson:
         """新しいデータを新規作成"""
         command = SaveCompanyCommand(
             uuid=request.uuid,
@@ -53,9 +53,9 @@ class CompanyResource(APIResource):
         dpo = self.company_application_service.company_with_id(id)
         return CompanyJson.from_(dpo)
 
-    def patch(self, name: str, id: str, request, _ = Depends(AuthenticateAdminUser())) -> CompanyJson:
+    def patch(self, name: str, id: str, request, _=Depends(AuthenticateAdminUser())) -> CompanyJson:
         """既存データに新しいプロパティを追加する"""
         pass
 
-    def delete(self, name: str, id: str, _ = Depends(AuthenticateAdminUser())) -> None:
+    def delete(self, name: str, id: str, _=Depends(AuthenticateAdminUser())) -> None:
         pass
