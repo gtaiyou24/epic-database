@@ -2,7 +2,7 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: ${NAME}
-#  namespace: ${PROJECT_NUMBER}
+  #  namespace: ${PROJECT_NUMBER}
   annotations:
     run.googleapis.com/ingress: "internal-and-cloud-load-balancing"  # 上り（内向き）の制御を「内部+ロードバランシング」に設定
 spec:
@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "0"
         run.googleapis.com/startup-cpu-boost: 'true'  # 起動時の CPU ブーストを有効化
         run.googleapis.com/cpu-throttling: "false" # CPUの常時割り当て設定
-        run.googleapis.com/container-dependencies: '{"frontend": ["backend"], "proxy": ["frontend"]}'
+        run.googleapis.com/container-dependencies: '{"proxy": ["frontend"]}'
     spec:
       serviceAccountName: ${SERVICE_ACCOUNT}
       containers:
@@ -50,16 +50,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
-#        - name: frontend
-#          image: ${FRONTEND_IMAGE}
-#          startupProbe:
-#            httpGet:
-#              path: /api/health/check
-#              port: 3000
-#            failureThreshold: 5
-#            periodSeconds: 10
-#            successThreshold: 1
-#            timeoutSeconds: 2
-      vpcAccess:  # Cloud SQL に接続する VPC コネクタ
+      vpcAccess:
         connector: ${CLOUD_SQL_VPC_CONNECTOR}
         egress: "ALL_TRAFFIC"
