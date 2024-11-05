@@ -42,8 +42,9 @@ spec:
               value: "InMem,Stub"
             - name: DATABASE_URL
               valueFrom:  # Secret Manager
-                key: "latest"
-                name: "DATABASE_URL"
+                secretKeyRef:
+                  key: "latest"
+                  name: "DATABASE_URL"
           startupProbe:
             httpGet:
               path: /health/check
