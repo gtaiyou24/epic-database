@@ -79,7 +79,7 @@ jobs:
         with:
           args: >-
             -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend
-#            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend
+            -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend
             -repo=${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy
             -tag-filter-any=.*
 
