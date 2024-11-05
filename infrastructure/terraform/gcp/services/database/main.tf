@@ -41,7 +41,7 @@ resource "google_sql_database_instance" "postgresql" {
       private_network = google_compute_network.vpc.id
     }
   }
-  depends_on = [google_compute_network.vpc]
+  depends_on = [google_compute_network.vpc, google_service_networking_connection.private_vpc_connection]
 }
 
 # 💾 Cloud SQL データベースを作成
