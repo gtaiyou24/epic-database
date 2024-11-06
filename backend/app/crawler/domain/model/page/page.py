@@ -1,0 +1,32 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from crawler.domain.model.page.html import Html
+from crawler.domain.model.url import URL, URLSet
+from crawler.domain.model.page import HttpStatus
+
+
+@dataclass(init=False, unsafe_hash=False, frozen=True)
+class Page:
+    url: URL
+    html: Html
+    http_status: HttpStatus
+
+    def __init__(self, url: URL, html: Html, http_status: HttpStatus):
+        super().__setattr__('url', url)
+        super().__setattr__('html', html)
+        super().__setattr__('http_status', http_status)
+
+    def __hash__(self):
+        return hash(self.url)
+
+    @staticmethod
+    def of(url: URL) -> Page:
+        return Page(url, Html.empty(), HttpStatus.UNKNOWN)
+
+    def get_urls(self) -> URLSet:
+        return URLSet(self.html.urls(self.url))
+
+    def is_200_status(self) -> bool:
+        return self.http_status is HttpStatus.OK
