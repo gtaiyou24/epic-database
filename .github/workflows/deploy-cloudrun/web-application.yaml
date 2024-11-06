@@ -13,7 +13,7 @@ spec:
         autoscaling.knative.dev/minScale: "0"
         run.googleapis.com/startup-cpu-boost: 'true'  # 起動時の CPU ブーストを有効化
         run.googleapis.com/cpu-throttling: "false" # CPUの常時割り当て設定
-        run.googleapis.com/container-dependencies: '{"proxy": ["backend"]}'
+        run.googleapis.com/container-dependencies: '{"proxy": ["frontend"], "frontend": ["backend"]}'
         run.googleapis.com/vpc-access-connector: ${CLOUD_SQL_VPC_CONNECTOR}  # Cloud SQL に接続する VPC コネクタ
         run.googleapis.com/vpc-access-egress: "all-traffic"
     spec:
@@ -53,3 +53,13 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
+        - name: frontend
+          image: ${FRONTEND_IMAGE}
+          startupProbe:
+            httpGet:
+              path: /api/health/check
+              port: 3000
+            failureThreshold: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2

@@ -102,6 +102,7 @@ jobs:
           export NAME="${{ inputs.cloud-run-name }}"
           export SERVICE_ACCOUNT="${{ inputs.cloud-run-service-account }}"
           export BACKEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}"
+          export FRONTEND_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend/nextjs:${{ inputs.docker-tag || github.sha }}"
           export PROXY_IMAGE="${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}"
           export CLOUD_SQL_VPC_CONNECTOR="${{ inputs.cloud-sql-vpc-connector }}"
           envsubst < ./.github/workflows/deploy-cloudrun/web-application.yaml > service.yaml
