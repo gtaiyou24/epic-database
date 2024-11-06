@@ -37,7 +37,7 @@ spec:
             - name: SLF4PY_LOG_LEVEL
               value: "INFO"
             - name: OPENAPI_PREFIX
-              value: ""
+              value: "/api/py"
             - name: DI_PROFILE_ACTIVES
               value: "Stub"
             - name: DATABASE_URL
