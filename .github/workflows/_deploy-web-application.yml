@@ -115,6 +115,7 @@ jobs:
           service: ${{ inputs.cloud-run-name }}
           region: ${{ inputs.region }}
           metadata: service.yaml
+          env_vars: ${{ inputs.cloud-run-backend-env-vars }}
 
       - name: Cloud Run の URL を出力
         run: echo ${{ steps.deploy.outputs.url }}
