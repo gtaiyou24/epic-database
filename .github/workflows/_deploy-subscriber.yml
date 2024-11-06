@@ -45,10 +45,10 @@ on:
         description: 'Cloud Run で利用する環境変数. ex) ^@^KEY1=VALUE1@KEY2=@KEY3=VALUE2,VALUE3'
         type: string
         required: true
-#      cloud-run-secrets:
-#        description: 'Cloud Run で利用するシークレット値. ex) 環境変数名1=SECRET1:latest,環境変数名2=SECRET2:latest,'
-#        type: string
-#        required: false
+      cloud-run-secrets:
+        description: 'Cloud Run で利用するシークレット値. ex) 環境変数名1=SECRET1:latest,環境変数名2=SECRET2:latest,'
+        type: string
+        required: false
 
 concurrency:
   group: deploy-subscriber-${{ inputs.cloud-run-name }}-${{ inputs.env }}
@@ -104,6 +104,7 @@ jobs:
           --min-instances ${{ inputs.cloud-run-min-instances }} \
           --port ${{ inputs.cloud-run-port }} \
           --set-env-vars ${{ inputs.cloud-run-env-vars }} \
+          --set-secrets ${{ inputs.cloud-run-secrets }} \
           --allow-unauthenticated \
           --ingress "internal-and-cloud-load-balancing" \
           --quiet
