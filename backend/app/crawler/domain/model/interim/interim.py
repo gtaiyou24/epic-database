@@ -1,0 +1,33 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from enum import Enum
+from typing import Iterator, Any
+
+from crawler.domain.model.interim import InterimId
+from crawler.domain.model.url import URLSet
+
+
+@dataclass(init=True, unsafe_hash=False, frozen=True)
+class Interim:
+    """スクレイピングしたデータをまとめたオブジェクト"""
+    class Source(Enum):
+        GBIZINFO = 'gBizInfo'
+        JOB = 'job'
+
+    id: InterimId
+    source: Source
+    from_urls: URLSet
+    payload: dict[str, Any]
+
+    def __hash__(self):
+        return hash(f"{self.id.value}-{self.source.name}")
+
+    def __eq__(self, other: Interim) -> bool:
+        if not isinstance(other, Interim):
+            return False
+        return self.id == other.id and self.source == other.source
+
+    def __iter__(self) -> Iterator[InterimId]:
+        for id in self.id:
+            yield id

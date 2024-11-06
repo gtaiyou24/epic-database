@@ -12,9 +12,7 @@ from tqdm import tqdm
 
 from common.application import transactional
 from common.exception import SystemException, ErrorCode
-from crawler.domain.model.data import DataSet
-from crawler.domain.model.data.impl import Text, Number, Date
-from crawler.domain.model.interim import InterimPayloadRepository, InterimPayload, Id
+from crawler.domain.model.interim import InterimRepository, Interim, InterimId
 from crawler.domain.model.url import URLSet
 
 
@@ -56,7 +54,7 @@ class HojinInfoJson(TypedDict):
 @set_logger
 class CompanyApplicationService:
     @inject
-    def __init__(self, interim_payload_repository: InterimPayloadRepository):
+    def __init__(self, interim_payload_repository: InterimRepository):
         self.__interim_payload_repository = interim_payload_repository
 
     @transactional
@@ -64,9 +62,14 @@ class CompanyApplicationService:
         """gBizINFO から法人データを一括ダウンロードする"""
         self.log.info("gBizINFO から法人データをダウンロード中...")
 
-        response = requests.post('https://info.gbiz.go.jp/hojin/DownloadJson', headers={
-            'Content-Type': 'application/json', 'Referer': 'https://info.gbiz.go.jp/hojin/DownloadTop',
-            'User-Agent': fake_useragent.UserAgent().random})
+        response = requests.post(
+            'https://info.gbiz.go.jp/hojin/DownloadJson',
+            headers={
+                'Content-Type': 'application/json',
+                'Referer': 'https://info.gbiz.go.jp/hojin/DownloadTop',
+                'User-Agent': fake_useragent.UserAgent().random
+            }
+        )
         if not response.ok:
             raise SystemException(ErrorCode.DOWNLOAD_DATA_FAILED, "gBizINFO から法人データをダウンロードするのに失敗しました")
 
@@ -79,32 +82,13 @@ class CompanyApplicationService:
                     hojin_list: list[HojinInfoJson] = json.loads(f.read())
                     for hojin in hojin_list:
                         # 法人データを保存する
-                        interim_payload = InterimPayload(
-                            Id(hojin.get('corporate_number')),
-                            InterimPayload.Type.COMPANY,
+                        interim_company = Interim(
+                            InterimId.Type.JCN.make(hojin.get('corporate_number')),
+                            Interim.Source.GBIZINFO,
                             URLSet(set()),
-                            DataSet({
-                                Text('name', hojin.get('name')),
-                                Text('kana', hojin.get('kana')),
-                                Text('postal_code', hojin.get('postal_code')),
-                                Text('location', hojin.get('location')),
-                                Text('representative_position', hojin.get('representative_position')),
-                                Text('representative_name', hojin.get('representative_name')),
-                                Date('founding_year', hojin.get('date_of_establishment')),
-                                Text('business_summary', hojin.get('business_summary')),
-                                Number('employee_number', hojin.get('employee_number')),
-                                Number('capital_stock', hojin.get('capital_stock')),
-                                Number('company_size_female', hojin.get('company_size_female')),
-                                Number('company_size_male', hojin.get('company_size_male')),
-                                Text('company_url', hojin.get('company_url')),
-                                # 登記記録の閉鎖等の事由(01: 清算の結了, 11: 合併による解散, 21: 登記官による閉鎖, 31: その他の清算の結了)
-                                Text('close_cause', hojin.get('close_cause')),
-                                Date('close_date', hojin.get('close_date')),
-                                Text('status', hojin.get('status')),
-                                Date('update_date', hojin.get('update_date')),
-                            })
+                            hojin
                         )
                         self.log.info(f"法人 {hojin.get('name')} を保存しました")
-                        self.__interim_payload_repository.save(interim_payload)
+                        self.__interim_payload_repository.save(interim_company)
 
         self.log.info("法人データの保存完了!!")

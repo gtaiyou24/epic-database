@@ -1,3 +1,3 @@
-from .id import Id
-from .interim_payload import InterimPayload
-from .interim_payload_repository import InterimPayloadRepository
+from .interim_id import InterimId
+from .interim import Interim
+from .interim_repository import InterimRepository

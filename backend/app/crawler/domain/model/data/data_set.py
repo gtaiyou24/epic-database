@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from crawler.domain.model.data import Data
 
@@ -17,3 +18,10 @@ class DataSet:
         data_list = {data for data in self._set}
         data_list.add(data)
         return DataSet(data_list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {data.name(): data.value() for data in self._set if data is not None}
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> DataSet:
+        return DataSet(set())
