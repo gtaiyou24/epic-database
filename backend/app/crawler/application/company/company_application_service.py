@@ -101,6 +101,6 @@ class CompanyApplicationService:
                 payload
             )
         else:
-            interim_company = interim_company.payload(payload)
+            interim_company = interim_company.set_payload(payload)
 
         self.__interim_payload_repository.save(interim_company)

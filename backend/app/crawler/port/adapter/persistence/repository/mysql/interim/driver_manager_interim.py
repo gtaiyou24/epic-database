@@ -52,8 +52,7 @@ class DriverManagerInterim:
         if interim.id.type_of(InterimId.Type.UUID):
             optional = self.__unit_of_work.session()\
                 .query(InterimsTableRow)\
-                .get(interim.id.type_of(InterimId.Type.UUID).value)\
-                .one_or_none()
+                .get(interim.id.type_of(InterimId.Type.UUID).value)
 
             if optional is None:
                 raise Exception(f'{InterimsTableRow.__tablename__}.{interim.id.value} が存在しないため、更新できません。')
@@ -75,10 +74,9 @@ class DriverManagerInterim:
 
     def delete(self, interim: Interim) -> None:
         if interim.id.type_of(InterimId.Type.UUID):
-            optional = self.__unit_of_work.session() \
-                .query(InterimsTableRow) \
-                .get(interim.id.type_of(InterimId.Type.UUID).value) \
-                .one_or_none()
+            optional = self.__unit_of_work.session()\
+                .query(InterimsTableRow)\
+                .get(interim.id.type_of(InterimId.Type.UUID).value)
 
             if optional is None:
                 return None

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterator, Any
+from typing import Any
 
 from crawler.domain.model.interim import InterimId
 from crawler.domain.model.url import URLSet
@@ -28,5 +28,5 @@ class Interim:
             return False
         return self.id == other.id and self.source == other.source
 
-    def payload(self, payload: dict[str, Any]) -> Interim:
+    def set_payload(self, payload: dict[str, Any]) -> Interim:
         return Interim(self.id, self.source, self.from_urls, payload)

@@ -86,7 +86,10 @@ class InterimsTableRow(DataBase):
     def to_entity(self) -> Interim:
         id = InterimId.Type.UUID.make(self.id)
         for other_id in self.interim_identity_maps:
-            id = id.set_other_id(other_id.to_value())
+            other_id = other_id.to_value()
+            if id.contains(other_id.type):
+                continue
+            id = id.set_other_id(other_id)
         return Interim(
             id=id,
             source=Interim.Source[self.source],
