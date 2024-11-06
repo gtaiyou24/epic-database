@@ -1,5 +1,5 @@
 output "db_host" {
-  value = google_sql_database_instance.postgresql.connection_name
+  value = google_sql_database_instance.postgresql.name
 }
 output "db_name" {
   value = google_sql_database.database.name
