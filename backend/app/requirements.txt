@@ -28,6 +28,9 @@ PyJWT==2.9.0  # JWT
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
 
+# Crawler
+cachecontrol[filecache]
+
 # Market
 pandas==2.2.3           # Data Analytics
 boto3==1.35.37          # AWS

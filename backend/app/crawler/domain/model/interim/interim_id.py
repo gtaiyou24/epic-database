@@ -37,7 +37,10 @@ class InterimId:
             return hash(f'{self.value}{self.type.name}')
         return hash(f'{self.value}{self.type.name}{self.other_id.__hash__()}')
 
-    def __eq__(self, other: InterimId):
+    def __eq__(self, other: InterimId) -> bool:
+        if not isinstance(other, InterimId):
+            return False
+
         for type in InterimId.Type:
             id = self.type_of(type)
             other_id = other.type_of(type)

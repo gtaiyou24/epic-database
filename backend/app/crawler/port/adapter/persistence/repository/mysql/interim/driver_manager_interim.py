@@ -20,7 +20,7 @@ class DriverManagerInterim:
                 return optional.to_entity()
 
             optional = q.query(InterimIdentityMapTableRow)\
-                .filter_by(value=id.value, type=id.type)\
+                .filter_by(value=id.value, type=id.type.name)\
                 .one_or_none()
 
             if optional is None:
@@ -60,7 +60,7 @@ class DriverManagerInterim:
         else:
             identity = self.__unit_of_work.session()\
                 .query(InterimIdentityMapTableRow)\
-                .filter_by(value=interim.id.value, type=interim.id.type)\
+                .filter_by(value=interim.id.value, type=interim.id.type.name)\
                 .one_or_none()
 
             if identity is None:
@@ -85,7 +85,7 @@ class DriverManagerInterim:
         else:
             identity = self.__unit_of_work.session() \
                 .query(InterimIdentityMapTableRow) \
-                .filter_by(value=interim.id.value, type=interim.id.type) \
+                .filter_by(value=interim.id.value, type=interim.id.type.name) \
                 .one_or_none()
 
             if identity is None:

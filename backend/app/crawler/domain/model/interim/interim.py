@@ -28,6 +28,5 @@ class Interim:
             return False
         return self.id == other.id and self.source == other.source
 
-    def __iter__(self) -> Iterator[InterimId]:
-        for id in self.id:
-            yield id
+    def payload(self, payload: dict[str, Any]) -> Interim:
+        return Interim(self.id, self.source, self.from_urls, payload)

@@ -6,9 +6,10 @@ from typing import TypedDict, Literal, Any
 
 import fake_useragent
 import requests
+from cachecontrol import CacheControl
+from cachecontrol.caches import FileCache
 from injector import singleton, inject
 from slf4py import set_logger
-from tqdm import tqdm
 
 from common.application import transactional
 from common.exception import SystemException, ErrorCode
@@ -56,13 +57,13 @@ class CompanyApplicationService:
     @inject
     def __init__(self, interim_payload_repository: InterimRepository):
         self.__interim_payload_repository = interim_payload_repository
+        self.__cached_session = CacheControl(requests.Session(), cache=FileCache('.webcache'))
 
-    @transactional
     def download(self) -> None:
         """gBizINFO から法人データを一括ダウンロードする"""
         self.log.info("gBizINFO から法人データをダウンロード中...")
 
-        response = requests.post(
+        response = self.__cached_session.post(
             'https://info.gbiz.go.jp/hojin/DownloadJson',
             headers={
                 'Content-Type': 'application/json',
@@ -77,18 +78,29 @@ class CompanyApplicationService:
 
         self.log.info("法人データを保存します...")
         with zipfile.ZipFile(io.BytesIO(response.content)) as zf:
-            for path in tqdm(zf.namelist()):
+            for path in zf.namelist():
                 with zf.open(path) as f:
                     hojin_list: list[HojinInfoJson] = json.loads(f.read())
                     for hojin in hojin_list:
-                        # 法人データを保存する
-                        interim_company = Interim(
-                            InterimId.Type.JCN.make(hojin.get('corporate_number')),
-                            Interim.Source.GBIZINFO,
-                            URLSet(set()),
-                            hojin
-                        )
+                        self.save(hojin)
                         self.log.info(f"法人 {hojin.get('name')} を保存しました")
-                        self.__interim_payload_repository.save(interim_company)
 
         self.log.info("法人データの保存完了!!")
+
+    @transactional
+    def save(self, payload: HojinInfoJson) -> None:
+        corporate_number = InterimId.Type.JCN.make(payload.get('corporate_number'))
+        interim_company = self.__interim_payload_repository.get(corporate_number)
+        if interim_company is None:
+            # 法人データを新規作成する
+            uuid = self.__interim_payload_repository.next_identity()
+            interim_company = Interim(
+                uuid.set_other_id(corporate_number),
+                Interim.Source.GBIZINFO,
+                URLSet(set()),
+                payload
+            )
+        else:
+            interim_company = interim_company.payload(payload)
+
+        self.__interim_payload_repository.save(interim_company)

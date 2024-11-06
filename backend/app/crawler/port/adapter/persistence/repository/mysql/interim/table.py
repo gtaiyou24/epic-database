@@ -43,7 +43,7 @@ class InterimIdentityMapTableRow(DataBase):
             InterimIdentityMapTableRow(
                 value=id.value,
                 type=id.type.name,
-                interim_payload_id=uuid
+                interim_id=uuid.value
             ) for id in interim_payload.id
         ]
 
@@ -55,7 +55,7 @@ class InterimsTableRow(DataBase):
     __tablename__ = 'interims'
     __table_args__ = (
         (Index(f'idx_{__tablename__}_1', 'id')),
-        (Index(f'idx_{__tablename__}_2', 'type')),
+        (Index(f'idx_{__tablename__}_2', 'source')),
         {"mysql_charset": "utf8mb4", "mysql_engine": "InnoDB"}
     )
 
@@ -67,16 +67,13 @@ class InterimsTableRow(DataBase):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
                                                  onupdate=func.now())
 
-    interim_identity_maps: Mapped[list[InterimIdentityMapTableRow]] = relationship(
-        "InterimIdentityMapTableRow",
-        back_populates="interim",
-    )
+    interim_identity_maps: Mapped[list[InterimIdentityMapTableRow]] = relationship(back_populates="interim", lazy='joined')
 
     @staticmethod
     def create(interim: Interim) -> InterimsTableRow:
         uuid = interim.id.type_of(InterimId.Type.UUID)
         return InterimsTableRow(
-            id=uuid,
+            id=uuid.value,
             source=interim.source.name,
             payload=json.dumps(interim.payload),
             interim_identity_maps=InterimIdentityMapTableRow.create(interim)
