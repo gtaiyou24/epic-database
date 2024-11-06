@@ -1,3 +1,17 @@
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "6.10.0"
+    }
+  }
+}
+# GCPプロバイダー の設定
+provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
 # 🤖 GitHub Actions のサービスアカウントを作成する
 resource "google_service_account" "github_actions" {
   account_id   = "github-actions"
@@ -15,11 +29,12 @@ resource "google_project_iam_member" "artifact-registry-repo-admin" {
   role    = "roles/artifactregistry.repoAdmin"  # Artifact Registry へのプッシュ、削除をするためのロール
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
-# resource "google_service_account_iam_member" "iam-service-account-user" {
-#   service_account_id = var.deployment_service_account_id
-#   role    = "roles/iam.serviceAccountUser"  # GitHub Actions サービスアカウントに Cloud Run などのコンピューティングをデプロイする権限を付与
-#   member  = "serviceAccount:${google_service_account.github_actions.email}"
-# }
+resource "google_service_account_iam_member" "iam-service-account-user" {
+  for_each           = { for sa in var.deployment_service_account_ids : sa => "projects/${var.project_id}/serviceAccounts/${sa}" }
+  service_account_id = each.value
+  role               = "roles/iam.serviceAccountUser"  # GitHub Actions サービスアカウントに Cloud Run などのコンピューティングをデプロイする権限を付与
+  member             = "serviceAccount:${google_service_account.github_actions.email}"
+}
 
 # 🛠️ Workload Identity プール・プロバイダを作成する
 resource "google_iam_workload_identity_pool" "github_actions_oidc" {  # Workload Identity プールを作成

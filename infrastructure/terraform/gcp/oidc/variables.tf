@@ -6,10 +6,15 @@ variable "project_number" {
   description = "Google Cloud Project Number"
   type        = string
 }
-# variable "deployment_service_account_id" {
-#   description = "デプロイ先のサービスアカウント"
-#   type        = string
-# }
+variable "region" {
+  description = "Google Cloud region"
+  type        = string
+  default     = "asia-northeast1"
+}
+variable "deployment_service_account_ids" {
+  description = "デプロイ先のサービスアカウント一覧"
+  type        = list(string)
+}
 variable "github_repo_owner" {
   description = "デプロイする GitHub リポジトリのオーナー名"
   type        = string
