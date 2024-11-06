@@ -89,8 +89,8 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v6
         with:
-          context: ./backend/
-          file: ./backend/Dockerfile.subscriber
+          context: ./backend/app/
+          file: ./backend/app/Dockerfile.subscriber
           push: true
           tags: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber:${{ inputs.docker-tag || github.sha }}
 
