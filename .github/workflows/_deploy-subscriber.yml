@@ -92,13 +92,13 @@ jobs:
           context: ./backend/app/
           file: ./backend/app/Dockerfile.subscriber
           push: true
-          tags: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber:${{ inputs.docker-tag || github.sha }}
+          tags: ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber/fastapi:${{ inputs.docker-tag || github.sha }}
 
       - name: デプロイ
         run: |-
           gcloud run deploy ${{ inputs.cloud-run-name }} \
           --region ${{ inputs.region }} \
-          --image ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber:${{ inputs.docker-tag || github.sha }} \
+          --image ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber/fastapi:${{ inputs.docker-tag || github.sha }} \
           --platform "managed" \
           --service-account ${{ inputs.cloud-run-service-account }} \
           --min-instances ${{ inputs.cloud-run-min-instances }} \
