@@ -40,6 +40,8 @@ spec:
               value: "/api/py"
             - name: DI_PROFILE_ACTIVES
               value: "Stub"
+            - name: ADMIN_API_ALLOWED_IP_ADDRESSES
+              value: "60.83.180.97"
             - name: DATABASE_URL
               valueFrom:  # Secret Manager
                 secretKeyRef:
