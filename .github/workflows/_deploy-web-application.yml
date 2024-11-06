@@ -86,11 +86,13 @@ jobs:
       - name: Docker ファイルをビルド
         run: |-
           docker build ./backend/app -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}
+          docker build ./frontend -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend/nextjs:${{ inputs.docker-tag || github.sha }}
           docker build ./infrastructure/nginx -t ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}
 
       - name: Docker イメージをプッシュ
         run: |-
           docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/backend/fastapi:${{ inputs.docker-tag || github.sha }}
+          docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/frontend/nextjs:${{ inputs.docker-tag || github.sha }}
           docker push ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/proxy/nginx:${{ inputs.docker-tag || github.sha }}
 
       # Create Cloud Run YAML Service specification from template

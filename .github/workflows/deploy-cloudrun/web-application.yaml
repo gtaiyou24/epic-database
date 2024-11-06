@@ -15,7 +15,7 @@ spec:
         run.googleapis.com/cpu-throttling: "false" # CPUの常時割り当て設定
         run.googleapis.com/container-dependencies: '{"proxy": ["backend"]}'
         run.googleapis.com/vpc-access-connector: ${CLOUD_SQL_VPC_CONNECTOR}  # Cloud SQL に接続する VPC コネクタ
-        run.googleapis.com/vpc-access-egress: "ALL_TRAFFIC"
+        run.googleapis.com/vpc-access-egress: "all-traffic"
     spec:
       serviceAccountName: ${SERVICE_ACCOUNT}
       containers:

@@ -27,6 +27,23 @@ services:
       redis:
         condition: service_healthy
 
+  # Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./frontend:/app
+    environment:
+      - WATCHPACK_POLLING=true
+    tty: true
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
   # FastAPI
   subscriber:
     build:
