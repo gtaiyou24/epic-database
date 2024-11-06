@@ -1,5 +1,5 @@
 output "db_host" {
-  value = google_sql_database_instance.postgresql.name
+  value = google_compute_global_address.private_ip_address.address
 }
 output "db_name" {
   value = google_sql_database.database.name

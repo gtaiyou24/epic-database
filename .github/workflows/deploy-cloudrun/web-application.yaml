@@ -43,7 +43,7 @@ spec:
             - name: DATABASE_URL
               valueFrom:  # Secret Manager
                 secretKeyRef:
-                  key: "2"
+                  key: "latest"
                   name: "DATABASE_URL"
           startupProbe:
             httpGet:
