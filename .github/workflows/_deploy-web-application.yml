@@ -37,14 +37,6 @@ on:
         type: number
         required: false
         default: 0
-      cloud-run-backend-env-vars:
-        description: 'Cloud Run で利用する環境変数. ex) ^@^KEY1=VALUE1@KEY2=@KEY3=VALUE2,VALUE3'
-        type: string
-        required: true
-      cloud-run-secrets:
-        description: 'Cloud Run で利用するシークレット値. ex) 環境変数名1=SECRET1:latest,環境変数名2=SECRET2:latest,'
-        type: string
-        required: false
       cloud-sql-vpc-connector:
         description: 'Cloud SQL に接続するための VPC コネクター'
         type: string
@@ -115,7 +107,6 @@ jobs:
           service: ${{ inputs.cloud-run-name }}
           region: ${{ inputs.region }}
           metadata: service.yaml
-          env_vars: ${{ inputs.cloud-run-backend-env-vars }}
 
       - name: Cloud Run の URL を出力
         run: echo ${{ steps.deploy.outputs.url }}
