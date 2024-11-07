@@ -87,7 +87,7 @@ class CompanyOfficesTableRow(DataBase):
         index=True
     )
     country: Mapped[str] = mapped_column(VARCHAR(10), nullable=False, comment='国')
-    postal_code: Mapped[int | None] = mapped_column(Integer, nullable=True, comment='郵便番号')
+    postal_code: Mapped[str | None] = mapped_column(VARCHAR(7), nullable=True, comment='郵便番号')
     prefecture: Mapped[str] = mapped_column(VARCHAR(255), nullable=False, comment="都道府県")
     city: Mapped[str] = mapped_column(VARCHAR(255), nullable=False, comment="市町村")
     street: Mapped[str] = mapped_column(VARCHAR(255), nullable=False, comment="番地/建物")
@@ -153,7 +153,7 @@ class CompaniesTableRow(DataBase):
     name: Mapped[str] = mapped_column(VARCHAR(255), nullable=False, comment="企業名")
     description: Mapped[str] = mapped_column(TEXT, nullable=True, comment="企業の概略")
     founded_at: Mapped[date] = mapped_column(DATE, nullable=True, comment="創業日")
-    homepage: Mapped[str] = mapped_column(TEXT, nullable=True, comment="ホームページURL")
+    homepage: Mapped[str | None] = mapped_column(TEXT, nullable=True, comment="ホームページURL")
 
     related_pages: Mapped[list[CompanyRelatedPagesTableRow]] = relationship(back_populates="company", lazy='joined')
     summaries: Mapped[CompanySummariesTableRow] = relationship(back_populates="company", lazy='joined', uselist=False)
@@ -176,7 +176,7 @@ class CompaniesTableRow(DataBase):
             name=company.name,
             description=company.description,
             founded_at=company.founded_at,
-            homepage=company.homepage.address,
+            homepage=company.homepage.address if company.homepage else None,
             related_pages=CompanyRelatedPagesTableRow.create(company),
             summaries=CompanySummariesTableRow.create(company),
             contact_points=CompanyContactPointsTableRow.create(company),
@@ -193,7 +193,7 @@ class CompaniesTableRow(DataBase):
             name=self.name,
             description=self.description,
             founded_at=self.founded_at,
-            homepage=URL(self.homepage),
+            homepage=URL(self.homepage) if self.homepage else None,
             same_as=[tr.to_value() for tr in self.related_pages],
             summaries=self.summaries.to_value(),
             contact_points={tr.to_value() for tr in self.contact_points},

@@ -24,7 +24,9 @@ class CacheLayerInterim:
 
     def caches_or_origins(self, *id: InterimId) -> set[Interim]:
         return self.__driver_manager_interim.find_by_ids(*id)
-        pass
+
+    def caches_or_origins_with_source(self, source: Interim.Source) -> set[Interim]:
+        return set(self.__driver_manager_interim.find_all_by(source=source.name))
 
     def set(self, interim: Interim) -> None:
         self.__driver_manager_interim.upsert(interim)

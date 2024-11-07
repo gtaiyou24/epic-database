@@ -20,5 +20,9 @@ class MySQLInterimRepository(InterimRepository):
         return self.__cache_layer_interim.cache_or_origin(id)
 
     @override
+    def interims_with_source(self, source: Interim.Source) -> set[Interim]:
+        return self.__cache_layer_interim.caches_or_origins_with_source(source)
+
+    @override
     def remove(self, interim: Interim) -> None:
         self.__cache_layer_interim.delete(interim)

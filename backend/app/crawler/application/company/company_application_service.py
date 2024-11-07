@@ -13,6 +13,7 @@ from slf4py import set_logger
 
 from common.application import transactional
 from common.exception import SystemException, ErrorCode
+from crawler.domain.model.dataset import DatasetService
 from crawler.domain.model.interim import InterimRepository, Interim, InterimId
 from crawler.domain.model.url import URLSet
 
@@ -55,8 +56,9 @@ class HojinInfoJson(TypedDict):
 @set_logger
 class CompanyApplicationService:
     @inject
-    def __init__(self, interim_payload_repository: InterimRepository):
-        self.__interim_payload_repository = interim_payload_repository
+    def __init__(self, dataset_service: DatasetService, interim_repository: InterimRepository):
+        self.__dataset_service = dataset_service
+        self.__interim_repository = interim_repository
         self.__cached_session = CacheControl(requests.Session(), cache=FileCache('.webcache'))
 
     def download(self) -> None:
@@ -90,10 +92,10 @@ class CompanyApplicationService:
     @transactional
     def save(self, payload: HojinInfoJson) -> None:
         corporate_number = InterimId.Type.JCN.make(payload.get('corporate_number'))
-        interim_company = self.__interim_payload_repository.get(corporate_number)
+        interim_company = self.__interim_repository.get(corporate_number)
         if interim_company is None:
             # 法人データを新規作成する
-            uuid = self.__interim_payload_repository.next_identity()
+            uuid = self.__interim_repository.next_identity()
             interim_company = Interim(
                 uuid.set_other_id(corporate_number),
                 Interim.Source.GBIZINFO,
@@ -103,4 +105,18 @@ class CompanyApplicationService:
         else:
             interim_company = interim_company.set_payload(payload)
 
-        self.__interim_payload_repository.save(interim_company)
+        self.__interim_repository.save(interim_company)
+
+    def scrape(self) -> None:
+        for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
+            # 事業所を取得する
+            print(interim.get('corporate_number'))
+            # ホームページを収集する
+            if not interim.get('company_url'):
+                # Google で検索し、検索結果を元にホームページを取得
+                pass
+
+    def transfer(self) -> None:
+        """データを連携する"""
+        for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
+            self.__dataset_service.transfer('company', interim)

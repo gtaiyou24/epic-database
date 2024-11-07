@@ -71,14 +71,14 @@ class Prefecture(Enum):
 class Address:
     """住所"""
     country: Literal['JP']
-    postal_code: int | None
+    postal_code: str | None
     prefecture: Prefecture
     city: str
     street: str
 
-    def __init__(self, country: str, postal_code: int | None, prefecture: Prefecture, city: str, street: str):
+    def __init__(self, country: str, postal_code: str | None, prefecture: Prefecture, city: str, street: str):
         if postal_code is not None:
-            assert isinstance(postal_code, int) and len(str(postal_code)) == 7, \
+            assert isinstance(postal_code, str) and len(str(postal_code)) == 7, \
                 f"郵便番号に{type(postal_code)}型の{postal_code}が指定されました。郵便番号には7桁の数字を入力してください。"
         super().__setattr__("country", country)
         super().__setattr__("postal_code", postal_code)

@@ -37,7 +37,7 @@ class CompanyJson(BaseModel):
 
     class Address(BaseModel):
         country: str = Field(title="国名", examples=["JP"])
-        postal_code: int | None = Field(title="郵便番号", examples=[1028282])
+        postal_code: str | None = Field(title="郵便番号", default=None, examples=['1028282'])
         prefecture: str = Field(title="都道府県", examples=["東京都"])
         city: str = Field(title="市区町村", examples=["千代田区"])
         street: str = Field(title="番地/建物", examples=["紀尾井町1-3 東京ガーデンテラス紀尾井町 紀尾井タワー"])
@@ -45,9 +45,10 @@ class CompanyJson(BaseModel):
     uuid: str | None = Field(title="UUID", description="EpicDataBaseが発行した企業ID", default=None)
     jcn: str = Field(title="法人番号", description="日本の法人番号(Japan Corporate Number)")
     name: str = Field(title="企業名", examples=["LINEヤフー株式会社"])
-    description: str = Field(title="企業の概略", examples=["インターネット広告事業、イーコマース事業及び会員サービス事業などの展開並びにグループ会社の経営管理業務など"])
-    founded_at: datetime = Field(title="設立日", examples=["1996-01-31"])
-    homepage: str = Field(title="コーポレートサイト", examples=["https://www.lycorp.co.jp"])
+    description: str | None = Field(title="企業の概略", default=None,
+                                    examples=["インターネット広告事業、イーコマース事業及び会員サービス事業などの展開並びにグループ会社の経営管理業務など"])
+    founded_at: datetime | None = Field(title="設立日", default=None, examples=["1996-01-31"])
+    homepage: str | None = Field(title="コーポレートサイト", default=None, examples=["https://www.lycorp.co.jp"])
     same_as: list[str] = Field(title="関連サイトやSNS", examples=[['https://www.lycorp.co.jp/ja/']], default=[])
     summaries: dict[str, Any] = Field(title="企業詳細情報一覧", default=[], examples=[{
         "representative": ["川邊健太郎", "出澤剛"],
@@ -67,7 +68,7 @@ class CompanyJson(BaseModel):
     offices: list[Address] = Field(
         title="事業所/オフィス",
         examples=[[
-            Address(country='JP', postal_code=1028282, prefecture='東京都', city='千代田区',
+            Address(country='JP', postal_code='1028282', prefecture='東京都', city='千代田区',
                     street='紀尾井町1-3 東京ガーデンテラス紀尾井町 紀尾井タワー'),
         ]],
         default=[]
@@ -81,7 +82,7 @@ class CompanyJson(BaseModel):
             name=dpo.company.name,
             description=dpo.company.description,
             founded_at=dpo.company.founded_at,
-            homepage=dpo.company.homepage.address,
+            homepage=dpo.company.homepage.address if dpo.company.homepage else None,
             same_as=[url.address for url in dpo.company.same_as],
             summaries={summary.name.value: summary.value for summary in dpo.company.summaries},
             contact_points=[

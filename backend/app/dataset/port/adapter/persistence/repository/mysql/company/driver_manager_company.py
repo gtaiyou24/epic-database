@@ -16,10 +16,10 @@ class DriverManagerCompany:
     def find_by_id(self, company_id: CompanyId) -> Company | None:
         with self.__unit_of_work.query() as q:
             query: Query[CompaniesTableRow] = q.query(CompaniesTableRow)
-            if company_id.type_of(CompanyId.Type.UUID):
-                query = query.filter_by(id=company_id.type_of(CompanyId.Type.UUID).value)
-            elif company_id.type_of(CompanyId.Type.JCN):
+            if company_id.type_of(CompanyId.Type.JCN):
                 query = query.filter_by(corporate_number=company_id.type_of(CompanyId.Type.JCN).value)
+            elif company_id.type_of(CompanyId.Type.UUID):
+                query = query.filter_by(id=company_id.type_of(CompanyId.Type.UUID).value)
             optional = query.one_or_none()
             if optional is None:
                 return None
@@ -62,7 +62,11 @@ class DriverManagerCompany:
     def update(self, company: Company) -> None:
         optional: CompaniesTableRow | None = self.__unit_of_work.session()\
             .query(CompaniesTableRow)\
-            .get(company.id.value)
+            .filter(or_(
+                CompaniesTableRow.id == company.id.type_of(CompanyId.Type.UUID).value,
+                CompaniesTableRow.corporate_number == company.id.type_of(CompanyId.Type.JCN).value,
+            ))\
+            .one_or_none()
         if optional is None:
             raise Exception(f'{CompaniesTableRow.__tablename__}.{company.id.value} が存在しないため、更新できません。')
 

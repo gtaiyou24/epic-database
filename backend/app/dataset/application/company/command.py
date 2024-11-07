@@ -8,17 +8,17 @@ class SaveCompanyCommand:
     @dataclass(init=True, unsafe_hash=True, frozen=True)
     class Address:
         country: str
-        postal_code: int
+        postal_code: str
         prefecture: str
         city: str
         street: str
 
-    uuid: str
+    uuid: str | None
     corporate_number: str
     name: str
     description: str
     founded_at: datetime
-    homepage: str
+    homepage: str | None
     same_as: list[str]
     summaries: dict[str, Any]
     contact_points: list[dict[str, Any]]

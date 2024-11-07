@@ -4,19 +4,23 @@ from crawler.domain.model.interim import InterimRepository, Interim, InterimId
 
 
 class InMemInterimRepository(InterimRepository):
-    interim_payloads: set[Interim] = set()
+    interims: set[Interim] = set()
 
     @override
     def save(self, interim: Interim) -> None:
-        self.interim_payloads.add(interim)
+        self.interims.add(interim)
 
     @override
     def get(self, id: InterimId) -> Interim | None:
-        for interim_payload in self.interim_payloads:
-            if interim_payload.id == id:
-                return interim_payload
+        for interim in self.interims:
+            if interim.id == id:
+                return interim
         return None
 
     @override
+    def interims_with_source(self, source: Interim.Source) -> set[Interim]:
+        return {interim for interim in self.interims if interim.source == source}
+
+    @override
     def remove(self, interim: Interim) -> None:
-        self.interim_payloads.remove(interim)
+        self.interims.remove(interim)

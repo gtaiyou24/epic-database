@@ -16,20 +16,20 @@ class CompanyApplicationService:
 
     @transactional(is_listening=True)
     def save(self, command: SaveCompanyCommand) -> CompanyDpo:
-        if command.uuid:
-            company_id = CompanyId.of(command.uuid)
-        else:
-            company_id = self.company_repository.next_identity()
+        company = self.company_repository.get(CompanyId.of(command.corporate_number))
 
-        if command.corporate_number:
-            company_id = company_id.set_other_id(CompanyId.of(command.corporate_number))
+        company_id = CompanyId.of(command.corporate_number)
+        if company is None:
+            company_id = company_id.set_other_id(self.company_repository.next_identity())
+        else:
+            company_id = company_id.set_other_id(company.id.type_of(CompanyId.Type.UUID))
 
         company = Company(
             company_id,
             command.name,
             command.description,
             command.founded_at,
-            URL(command.homepage),
+            URL(command.homepage) if command.homepage else None,
             list([URL(url) for url in command.same_as]),
             {Summary.Name.value_of(name).make(value) for name, value in command.summaries.items()},
             {ContactPoint.Type.value_of(type).make(value) for type, value in command.contact_point_items()},

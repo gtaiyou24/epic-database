@@ -17,5 +17,9 @@ class InterimRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def interims_with_source(self, source: Interim.Source) -> set[Interim]:
+        pass
+
+    @abc.abstractmethod
     def remove(self, interim: Interim) -> None:
         pass
