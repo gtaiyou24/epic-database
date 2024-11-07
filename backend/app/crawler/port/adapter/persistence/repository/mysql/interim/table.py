@@ -67,7 +67,8 @@ class InterimsTableRow(DataBase):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
                                                  onupdate=func.now())
 
-    interim_identity_maps: Mapped[list[InterimIdentityMapTableRow]] = relationship(back_populates="interim", lazy='joined')
+    interim_identity_maps: Mapped[list[InterimIdentityMapTableRow]] = relationship(back_populates="interim",
+                                                                                   lazy='joined')
 
     @staticmethod
     def create(interim: Interim) -> InterimsTableRow:
