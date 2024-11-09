@@ -1,0 +1,1 @@
+from .search_engine_adapter import SearchEngineAdapter

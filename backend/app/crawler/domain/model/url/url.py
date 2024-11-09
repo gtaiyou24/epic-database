@@ -28,7 +28,9 @@ class URL:
             return URL(path)
         return URL(urljoin(url.absolute, path))
 
-    def match(self, regex: re.Pattern) -> bool:
+    def match(self, regex: re.Pattern | str) -> bool:
+        if isinstance(regex, str):
+            regex = re.compile(regex)
         return regex.match(self.absolute) is not None
 
     def __hash__(self):
@@ -40,4 +42,4 @@ class URL:
         return self.absolute == other.absolute
 
     def __str__(self):
-        return f'\\{"URL": \\{"absolute": {self.absolute}\\}\\}'
+        return self.absolute

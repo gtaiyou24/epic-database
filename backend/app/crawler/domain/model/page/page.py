@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from bs4 import BeautifulSoup
+
 from crawler.domain.model.page.html import Html
 from crawler.domain.model.url import URL, URLSet
 from crawler.domain.model.page import HttpStatus
@@ -25,8 +27,11 @@ class Page:
     def of(url: URL) -> Page:
         return Page(url, Html.empty(), HttpStatus.UNKNOWN)
 
-    def get_urls(self) -> URLSet:
+    def urls(self) -> URLSet:
         return URLSet(self.html.urls(self.url))
+
+    def to_beautiful_soup(self) -> BeautifulSoup:
+        return BeautifulSoup(self.html.content, 'lxml')
 
     def is_200_status(self) -> bool:
         return self.http_status is HttpStatus.OK

@@ -1,1 +1,2 @@
 from .company_application_service import CompanyApplicationService
+from .scrape_company_application_service import ScrapeCompanyApplicationService

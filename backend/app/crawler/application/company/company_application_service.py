@@ -13,9 +13,9 @@ from slf4py import set_logger
 
 from common.application import transactional
 from common.exception import SystemException, ErrorCode
-from crawler.domain.model.dataset import DatasetService
+from crawler.domain.model.listing import ListingManagementService
 from crawler.domain.model.interim import InterimRepository, Interim, InterimId
-from crawler.domain.model.url import URLSet
+from crawler.domain.model.url import URLSet, URL
 
 
 class HojinInfoJson(TypedDict):
@@ -56,7 +56,9 @@ class HojinInfoJson(TypedDict):
 @set_logger
 class CompanyApplicationService:
     @inject
-    def __init__(self, dataset_service: DatasetService, interim_repository: InterimRepository):
+    def __init__(self,
+                 dataset_service: ListingManagementService,
+                 interim_repository: InterimRepository):
         self.__dataset_service = dataset_service
         self.__interim_repository = interim_repository
         self.__cached_session = CacheControl(requests.Session(), cache=FileCache('.webcache'))
@@ -84,8 +86,10 @@ class CompanyApplicationService:
                 with zf.open(path) as f:
                     hojin_list: list[HojinInfoJson] = json.loads(f.read())
                     for hojin in hojin_list:
-                        self.save(hojin)
-                        self.log.info(f"法人 {hojin.get('name')} を保存しました")
+                        try:
+                            self.save(hojin)
+                        except Exception as e:
+                            self.log.error(f"法人 {hojin.get('name')} でエラーが発生しました : {e}")
 
         self.log.info("法人データの保存完了!!")
 
@@ -93,28 +97,23 @@ class CompanyApplicationService:
     def save(self, payload: HojinInfoJson) -> None:
         corporate_number = InterimId.Type.JCN.make(payload.get('corporate_number'))
         interim_company = self.__interim_repository.get(corporate_number)
-        if interim_company is None:
-            # 法人データを新規作成する
-            uuid = self.__interim_repository.next_identity()
-            interim_company = Interim(
-                uuid.set_other_id(corporate_number),
-                Interim.Source.GBIZINFO,
-                URLSet(set()),
-                payload
-            )
-        else:
-            interim_company = interim_company.set_payload(payload)
+        if interim_company is not None:
+            # すでに保存されている場合はスキップする
+            self.log.info(f"法人 {payload.get('name')} はすでに保存されているため、スキップします")
+            return
+
+        # 法人データを新規作成する
+        uuid = self.__interim_repository.next_identity()
+        interim_company = Interim(
+            uuid.set_other_id(corporate_number),
+            Interim.Source.GBIZINFO,
+            URLSet(set()),
+            payload
+        )
 
         self.__interim_repository.save(interim_company)
 
-    def scrape(self) -> None:
-        for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
-            # 事業所を取得する
-            print(interim.get('corporate_number'))
-            # ホームページを収集する
-            if not interim.get('company_url'):
-                # Google で検索し、検索結果を元にホームページを取得
-                pass
+        self.log.info(f"法人 {payload.get('name')} を保存しました")
 
     def transfer(self) -> None:
         """データを連携する"""

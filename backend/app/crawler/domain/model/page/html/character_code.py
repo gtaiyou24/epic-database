@@ -12,4 +12,4 @@ class CharacterCode(Enum):
         for e in CharacterCode:
             if e.value.lower() == char_code:
                 return e
-        raise ValueError(f"該当の文字コードが存在しません。 (文字コード = {char_code})")
+        return CharacterCode.UTF_8

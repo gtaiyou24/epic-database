@@ -19,9 +19,25 @@ class DataSet:
         data_list.add(data)
         return DataSet(data_list)
 
+    @staticmethod
+    def concat(dataset_list: list[DataSet]) -> DataSet:
+        keys = set()
+        for dataset in dataset_list:
+            for key in dataset.to_dict().keys():
+                keys.add(key)
+
+        values = dict()
+        for key in keys:
+            for dataset in dataset_list:
+                value: Any = dataset.to_dict().get(key, None)
+                if value is not None:
+                    values.update({key: value})
+
+        return DataSet.from_dict(values)
+
     def to_dict(self) -> dict[str, Any]:
         return {data.name(): data.value() for data in self._set if data is not None}
 
     @staticmethod
     def from_dict(data: dict[str, Any]) -> DataSet:
-        return DataSet(set())
+        return DataSet(set(Data(key, value) for key, value in data.items()))

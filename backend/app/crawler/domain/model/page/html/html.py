@@ -13,8 +13,8 @@ class Html:
     content: str | None
     character_code: CharacterCode | None
 
-    def __init__(self, text: str | None, character_code: CharacterCode | None):
-        super().__setattr__("text", text)
+    def __init__(self, content: str | None, character_code: CharacterCode | None):
+        super().__setattr__("content", content)
         super().__setattr__("character_code", character_code)
 
     @staticmethod
@@ -37,3 +37,14 @@ class Html:
                 continue
 
         return url_set
+
+    def scrape_one(self, css_selector: str) -> Html | None:
+        bs = BeautifulSoup(self.content, "lxml")
+        one = bs.select_one(css_selector)
+        if one is None:
+            return None
+        return Html(one.text, self.character_code)
+
+    def scrape_all(self, css_selector: str) -> list[Html]:
+        bs = BeautifulSoup(self.content, "lxml")
+        return list(Html(str(tag), self.character_code) for tag in bs.select(css_selector))

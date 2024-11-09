@@ -30,9 +30,7 @@ python-jose[cryptography]==3.3.0
 
 # Crawler
 cachecontrol[filecache]
-
-# Market
-pandas==2.2.3           # Data Analytics
-boto3==1.35.37          # AWS
-fake_useragent==1.4.0   # Scraping
-beautifulsoup4==4.12.3  # Scraping
+beautifulsoup4==4.12.3
+lxml==5.2.2
+fake-useragent==1.5.1
+selenium==4.26.1

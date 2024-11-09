@@ -5,15 +5,20 @@ from fastapi import APIRouter
 
 from common.core import AppModule
 from common.port.adapter.messaging import ExchangeListener
-from crawler.domain.model.dataset import DatasetService
+from crawler.domain.model.page import PageService
+from crawler.domain.model.listing import ListingManagementService
 from crawler.domain.model.interim import InterimRepository
-from crawler.port.adapter.messaging import DownloadGBizINFOListener, TransferCompanyListener
+from crawler.port.adapter.messaging import DownloadGBizINFOListener, TransferCompanyListener, ScrapeCompanyListener
 from crawler.port.adapter.persistence.repository.inmem import InMemInterimRepository
 from crawler.port.adapter.persistence.repository.mysql.interim import MySQLInterimRepository
-from crawler.port.adapter.service.dataset import DatasetServiceImpl
-from crawler.port.adapter.service.dataset.adapter import DatasetAdapter
-from crawler.port.adapter.service.dataset.adapter.dataset import DatasetModuleAdapter
-from crawler.port.adapter.service.dataset.adapter.stub import DatasetAdapterStub
+from crawler.port.adapter.service.page import PageServiceImpl
+from crawler.port.adapter.service.page.adapter import SearchEngineAdapter
+from crawler.port.adapter.service.page.adapter.google import GoogleAdapter
+from crawler.port.adapter.service.page.adapter.stub import SearchEngineAdapterStub
+from crawler.port.adapter.service.listing import ListingManagementServiceImpl
+from crawler.port.adapter.service.listing.adapter import ListingAdapter
+from crawler.port.adapter.service.listing.adapter.module import ListingModuleAdapter
+from crawler.port.adapter.service.listing.adapter.stub import ListingAdapterStub
 
 
 class Crawler(AppModule):
@@ -24,10 +29,12 @@ class Crawler(AppModule):
             DI.of(InterimRepository, {"InMem": InMemInterimRepository}, MySQLInterimRepository),
 
             # Service
-            DI.of(DatasetService, {}, DatasetServiceImpl),
+            DI.of(ListingManagementService, {}, ListingManagementServiceImpl),
+            DI.of(PageService, {}, PageServiceImpl),
 
             # Adapter
-            DI.of(DatasetAdapter, {"Stub": DatasetAdapterStub}, DatasetModuleAdapter),
+            DI.of(ListingAdapter, {"Stub": ListingAdapterStub}, ListingModuleAdapter),
+            DI.of(SearchEngineAdapter, {"Stub": SearchEngineAdapterStub}, GoogleAdapter),
         )
 
     @override
@@ -44,5 +51,6 @@ class Crawler(AppModule):
     def subscribers(self) -> set[ExchangeListener]:
         return {
             DownloadGBizINFOListener(),
+            ScrapeCompanyListener(),
             TransferCompanyListener(),
         }

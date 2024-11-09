@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+from crawler.domain.model.data import DataSet
 from crawler.domain.model.interim import InterimId
 from crawler.domain.model.url import URLSet
 
@@ -35,6 +36,17 @@ class Interim:
                 return None
             value = value[k]
         return value
+
+    def set(self, key: str, value: Any) -> Interim:
+        payload = self.payload
+        payload[key] = value
+        return Interim(self.id, self.source, self.from_urls, payload)
+
+    def set_with_dataset(self, dataset: DataSet) -> Interim:
+        interim = self
+        for key, value in dataset.to_dict().items():
+            interim = interim.set(key, value)
+        return interim
 
     def set_payload(self, payload: dict[str, Any]) -> Interim:
         return Interim(self.id, self.source, self.from_urls, payload)

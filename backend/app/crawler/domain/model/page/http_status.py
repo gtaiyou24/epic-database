@@ -21,20 +21,7 @@ class HttpStatus(Enum):
 
     @staticmethod
     def value_of(status: int) -> HttpStatus:
-        if status == HttpStatus.OK.value:
-            return HttpStatus.OK
-        if status == HttpStatus.BAD_REQUEST.value:
-            return HttpStatus.BAD_REQUEST
-        if status == HttpStatus.UNAUTHRORIZED.value:
-            return HttpStatus.UNAUTHRORIZED
-        if status == HttpStatus.FORBIDDEN.value:
-            return HttpStatus.FORBIDDEN
-        if status == HttpStatus.NOT_FOUND.value:
-            return HttpStatus.NOT_FOUND
-        if status == HttpStatus.METHOD_NOT_ALLOWED.value:
-            return HttpStatus.METHOD_NOT_ALLOWED
-
-        if status == HttpStatus.INTERNAL_SERVER_ERROR.value:
-            return HttpStatus.INTERNAL_SERVER_ERROR
-
+        for e in HttpStatus:
+            if e.value == status:
+                return e
         return HttpStatus.UNKNOWN

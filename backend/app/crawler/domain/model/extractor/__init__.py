@@ -1,2 +1,2 @@
-from .data_extractor import DataExtractor
-from .data_extractors import DataExtractors
+from .data_extractor import DataExtractor, CssSelector, XPathSelector, TableRowExtractor
+from .dataset_extractors import DataSetExtractors

@@ -1,2 +1,3 @@
 from .download_gbizinfo_listener import DownloadGBizINFOListener
+from .scrape_company_listener import ScrapeCompanyListener
 from .transfer_company_listener import TransferCompanyListener
