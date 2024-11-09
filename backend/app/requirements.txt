@@ -1,21 +1,21 @@
 # App
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-python-multipart==0.0.9
-pydantic-settings==2.3.4
+fastapi==0.115.4
+uvicorn[standard]==0.32.0
+python-multipart==0.0.17
+pydantic-settings==2.6.1
 di4injector==0.0.2      # DI
 slf4py==0.0.4           # Logger
 html2text==2024.2.26    # Mail
-requests==2.31.0        # HTTP Request
+requests==2.32.3        # HTTP Request
 python-dotenv==1.0.1    # Environment
-pytz==2024.1            # Timezone
-cachetools==5.3.2       # Cache
-SQLAlchemy==2.0.35      # DataBase
-mysqlclient==2.2.4      # MySQL
-psycopg2-binary==2.9.9  # Postgresql
-psycopg2==2.9.9         # Postgresql
+pytz==2024.2            # Timezone
+cachetools==5.5.0       # Cache
+SQLAlchemy==2.0.36      # DataBase
+mysqlclient==2.2.5      # MySQL
+psycopg2-binary==2.9.10  # Postgresql
+psycopg2==2.9.10         # Postgresql
 redis[hiredis]          # Redis
-tqdm==4.66.6            # Progress
+tqdm==4.67.0            # Progress
 
 # Common
 google-cloud-pubsub==2.26.1
@@ -31,6 +31,6 @@ python-jose[cryptography]==3.3.0
 # Crawler
 cachecontrol[filecache]
 beautifulsoup4==4.12.3
-lxml==5.2.2
+lxml==5.3.0
 fake-useragent==1.5.1
 selenium==4.26.1
