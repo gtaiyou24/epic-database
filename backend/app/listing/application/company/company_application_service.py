@@ -27,6 +27,7 @@ class CompanyApplicationService:
         company = Company(
             company_id,
             command.name,
+            URL(command.image) if command.image else None,
             command.description,
             command.founded_at,
             URL(command.homepage) if command.homepage else None,

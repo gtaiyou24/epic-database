@@ -128,12 +128,19 @@ class ScrapeCompanyApplicationService:
 
     def scrape_all(self):
         for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
-            self.scrape(interim.get('corporate_number'))
+            try:
+                self.scrape(interim.get('corporate_number'))
+            except Exception as e:
+                self.log.error(e)
+                continue
 
     @transactional
     def scrape(self, corporate_number: str) -> None:
         id = InterimId.Type.JCN.make(corporate_number)
         interim = self.__interim_repository.get(id)
+
+        if interim is None:
+            return
 
         # 他ウェブサイトから法人情報を取得する
         scraped: list[DataSet] = []
@@ -149,6 +156,7 @@ class ScrapeCompanyApplicationService:
 
         # 収集した法人情報をまとめる
         dataset = DataSet.concat(scraped)
+        interim = interim.set_with_dataset(dataset)
 
         self.log.info(f"{corporate_number}: {dataset.to_dict()}")
 
@@ -160,9 +168,15 @@ class ScrapeCompanyApplicationService:
         #     if url:
         #        interim.set('company_url', url.absolute)
 
-        # TODO: ホームページから各情報を収集する
-
-        interim = interim.set_with_dataset(dataset)
+        # ホームページから各情報を収集する
+        if interim.get('company_url'):
+            page = self.__page_service.fetch(URL(interim.get('company_url')))
+            if page.http_status.is_(200):
+                ogp = page.to_beautiful_soup().find('meta', property='og:image')
+                if ogp and ogp.get('content'):
+                    image_url = URL.of(ogp.get('content'), page.url)
+                    interim = interim.set('company_image', image_url.absolute)
+                    self.log.info(f"company_image: {image_url.absolute}")
 
         self.__interim_repository.save(interim)
         time.sleep(int(random.uniform(3, 5)))

@@ -28,6 +28,7 @@ class ListingModuleAdapter(ListingAdapter):
             uuid=None,
             corporate_number=interim.get('corporate_number'),
             name=interim.get('name'),
+            image=interim.get('company_image', None),
             description=interim.get('business_summary'),
             founded_at=interim.get('date_of_establishment'),
             homepage=interim.get('company_url'),

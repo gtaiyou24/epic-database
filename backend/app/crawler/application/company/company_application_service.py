@@ -115,4 +115,8 @@ class CompanyApplicationService:
     def transfer(self) -> None:
         """データを連携する"""
         for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
-            self.__dataset_service.transfer('company', interim)
+            try:
+                self.__dataset_service.transfer('company', interim)
+            except Exception as e:
+                self.log.warn(e)
+                continue

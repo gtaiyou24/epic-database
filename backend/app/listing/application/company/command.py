@@ -16,6 +16,7 @@ class SaveCompanyCommand:
     uuid: str | None
     corporate_number: str
     name: str
+    image: str | None
     description: str
     founded_at: datetime
     homepage: str | None

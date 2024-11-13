@@ -152,6 +152,7 @@ class CompaniesTableRow(DataBase):
     corporate_number: Mapped[str] = mapped_column(VARCHAR(13), nullable=False, comment="法人番号")
     name: Mapped[str] = mapped_column(VARCHAR(255), nullable=False, comment="企業名")
     description: Mapped[str] = mapped_column(TEXT, nullable=True, comment="企業の概略")
+    image: Mapped[str] = mapped_column(TEXT, nullable=True, comment="企業画像")
     founded_at: Mapped[date] = mapped_column(DATE, nullable=True, comment="創業日")
     homepage: Mapped[str | None] = mapped_column(TEXT, nullable=True, comment="ホームページURL")
 
@@ -175,6 +176,7 @@ class CompaniesTableRow(DataBase):
             corporate_number=company.id.type_of(CompanyId.Type.JCN).value,
             name=company.name,
             description=company.description,
+            image=company.image.address if company.image else None,
             founded_at=company.founded_at,
             homepage=company.homepage.address if company.homepage else None,
             related_pages=CompanyRelatedPagesTableRow.create(company),
@@ -186,6 +188,7 @@ class CompaniesTableRow(DataBase):
     def update(self, company: Company) -> None:
         self.name = company.name
         self.description = company.description
+        self.image = company.image.address if company.image else None
         self.founded_at = company.founded_at
         self.homepage = company.homepage.address if company.homepage else None
         self.related_pages = CompanyRelatedPagesTableRow.create(company)
@@ -197,6 +200,7 @@ class CompaniesTableRow(DataBase):
         return Company(
             id=CompanyId.of(self.id).set_other_id(CompanyId.of(self.corporate_number)),
             name=self.name,
+            image=URL(self.image) if self.image else None,
             description=self.description,
             founded_at=self.founded_at,
             homepage=URL(self.homepage) if self.homepage else None,

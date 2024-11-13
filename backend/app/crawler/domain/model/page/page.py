@@ -31,7 +31,7 @@ class Page:
         return URLSet(self.html.urls(self.url))
 
     def to_beautiful_soup(self) -> BeautifulSoup:
-        return BeautifulSoup(self.html.content, 'lxml')
+        return BeautifulSoup(self.html.content, features='xml')
 
-    def is_200_status(self) -> bool:
+    def status_is_200(self) -> bool:
         return self.http_status is HttpStatus.OK

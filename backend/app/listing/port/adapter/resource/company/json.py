@@ -47,6 +47,8 @@ class CompanyJson(BaseModel):
     name: str = Field(title="企業名", examples=["LINEヤフー株式会社"])
     description: str | None = Field(title="企業の概略", default=None,
                                     examples=["インターネット広告事業、イーコマース事業及び会員サービス事業などの展開並びにグループ会社の経営管理業務など"])
+    image: str | None = Field(title="企業画像", default=None,
+                              examples=["https://www.lycorp.co.jp/assets/images/ogp_ly_jp_bk_1200_628.png"])
     founded_at: datetime | None = Field(title="設立日", default=None, examples=["1996-01-31"])
     homepage: str | None = Field(title="コーポレートサイト", default=None, examples=["https://www.lycorp.co.jp"])
     same_as: list[str] = Field(title="関連サイトやSNS", examples=[['https://www.lycorp.co.jp/ja/']], default=[])
@@ -81,6 +83,7 @@ class CompanyJson(BaseModel):
             jcn=dpo.company.id.type_of(CompanyId.Type.JCN).value,
             name=dpo.company.name,
             description=dpo.company.description,
+            image=dpo.company.image.address if dpo.company.image else None,
             founded_at=dpo.company.founded_at,
             homepage=dpo.company.homepage.address if dpo.company.homepage else None,
             same_as=[url.address for url in dpo.company.same_as],

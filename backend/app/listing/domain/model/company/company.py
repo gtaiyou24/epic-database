@@ -11,6 +11,7 @@ from listing.domain.model.url import URL
 class Company:
     id: CompanyId
     name: str
+    image: URL | None
     description: str
     # TODO: 業界(大業界・小業界)
     founded_at: date
@@ -26,6 +27,7 @@ class Company:
     def __init__(self,
                  id: CompanyId,
                  name: str,
+                 image: URL | None,
                  description: str,
                  founded_at: date,
                  homepage: URL,
@@ -35,6 +37,7 @@ class Company:
                  offices: set[Address] = {}):
         super().__setattr__("id", id)
         super().__setattr__("name", name)
+        super().__setattr__("image", image)
         super().__setattr__("description", description)
         super().__setattr__("founded_at", founded_at)
         super().__setattr__("homepage", homepage)

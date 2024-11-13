@@ -25,3 +25,6 @@ class HttpStatus(Enum):
             if e.value == status:
                 return e
         return HttpStatus.UNKNOWN
+
+    def is_(self, status: int) -> bool:
+        return self.value == status
