@@ -3,7 +3,7 @@ import abc
 
 class ExchangeListener(abc.ABC):
     @abc.abstractmethod
-    def filtered_dispatch(self, event_type: str, text_message: str) -> None:
+    async def filtered_dispatch(self, event_type: str, text_message: str) -> None:
         """イベントタイプとメッセージ指定でメッセージを処理する"""
         pass
 

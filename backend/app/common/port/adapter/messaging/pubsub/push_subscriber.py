@@ -17,7 +17,7 @@ class PushSubscriber:
     def __init__(self, subscribers: set[ExchangeListener]):
         self._subscribers = subscribers
 
-    async def receive(self, request: MessageJson) -> None:
+    def receive(self, request: MessageJson) -> None:
         try:
             plain_json = base64.b64decode(request.message.data).decode()
             data = json.loads(plain_json)

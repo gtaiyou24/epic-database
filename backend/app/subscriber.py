@@ -56,7 +56,7 @@ app = FastAPI(
 
 
 @app.post("/", status_code=status.HTTP_204_NO_CONTENT)
-async def receive(request: MessageJson):
+def receive(request: MessageJson):
     """Receive and parse Pub/Sub messages."""
     all_subscribers = set()
     for module in [common, apigateway, authority, crawler, listing, payment]:
@@ -64,4 +64,4 @@ async def receive(request: MessageJson):
             all_subscribers.add(subscriber)
 
     push_subscriber = PushSubscriber(all_subscribers)
-    await push_subscriber.receive(request)
+    push_subscriber.receive(request)

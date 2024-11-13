@@ -1,5 +1,6 @@
-import abc
-from typing import override
+from __future__ import annotations
+
+from typing import override, Callable
 
 from lxml import html
 
@@ -8,17 +9,33 @@ from crawler.domain.model.data import Data
 from crawler.domain.model.page import Page
 
 
-class DataExtractor(abc.ABC):
+class DataExtractor:
     """抽出器の抽象クラス"""
+    def __init__(self,
+                 extractor: DataExtractor,
+                 processor_pipeline: list[Callable[[str], str]] = []):
+        self.__extractor = extractor
+        self.__processor_pipeline = processor_pipeline
 
-    @abc.abstractmethod
     def extract(self, data_object: Interim, page: Page) -> Data | None:
-        pass
+        data = self.__extractor.extract(data_object, page)
+
+        if data is None:
+            return None
+
+        value = str(data.value())
+        for processor in self.__processor_pipeline:
+            value = processor(value)
+            if value is None:
+                return None
+
+        return Data(data.name(), value)
 
 
 class CssSelector(DataExtractor):
     def __init__(self,
-                 name: str, css_selector: str,
+                 name: str,
+                 css_selector: str,
                  attribute: str | None = None):
         self.__name = name
         self.__css_selector = css_selector
@@ -47,9 +64,7 @@ class XPathSelector(DataExtractor):
 
 
 class TableRowExtractor(DataExtractor):
-    def __init__(self,
-                 name: str,
-                 th: str):
+    def __init__(self, name: str, th: str):
         self.__name = name
         self.__th_text = th
 

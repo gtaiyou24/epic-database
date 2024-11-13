@@ -1,4 +1,6 @@
+import asyncio
 import random
+import re
 import time
 
 from injector import inject
@@ -6,10 +8,10 @@ from slf4py import set_logger
 
 from common.application import transactional
 from crawler.domain.model.data import DataSet
-from crawler.domain.model.extractor import DataSetExtractors, CssSelector, TableRowExtractor, XPathSelector
+from crawler.domain.model.extractor import DataSetExtractors, CssSelector, TableRowExtractor, XPathSelector, \
+    DataExtractor
 from crawler.domain.model.interim import InterimId, InterimRepository, Interim
 from crawler.domain.model.page import PageService
-from crawler.domain.model.scrape import ScrapeCompanyURLService
 from crawler.domain.model.url import URL
 
 
@@ -23,28 +25,104 @@ class ScrapeCompanyApplicationService:
         self.__interim_repository = interim_repository
         self.__dataset_extractors = {
             "https://houjin.jp/c/{}": DataSetExtractors([
-                TableRowExtractor('company_url', 'URL'),
-                TableRowExtractor('telephone', '電話番号'),
+                DataExtractor(TableRowExtractor('company_url', 'URL'), [
+                    lambda value: value.strip(),
+                    lambda value: value if re.match(r"^(https|http)?://[\w/:%#\$&\?\(\)~\.=\+\-]+", value) else None
+                ]),
+                DataExtractor(TableRowExtractor('telephone', '電話番号'), [
+                    lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                    lambda value: str(value).replace('-', ''),
+                    lambda value: value if re.match(r'[0-9]+', value) else None
+                ]),
             ]),
             "https://salesnow.jp/db/companies/{}": DataSetExtractors([
-                CssSelector('company_url', 'div.ProfileBox_link__MJT8n'),
-                XPathSelector('market', '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[4]/span/text()[2]'),
-                XPathSelector('capital', '//*[@id="__next"]/div[1]/div[1]/div[2]/div[1]/div/div[1]/div[2]/div/div[3]/div[1]/div[2]/text()'),
+                DataExtractor(
+                    XPathSelector('company_url', '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[2]/div/text()'),
+                    [
+                        lambda value: value.strip(),
+                        lambda value: value if re.match(r"^(https|http)?://[\w/:%#\$&\?\(\)~\.=\+\-]+", value) else None
+                    ]
+                ),
+                DataExtractor(
+                    XPathSelector('market', '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[4]/span/text()[2]'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: value.replace('プライム（内国株式）', '東証プライム')\
+                            .replace('グロース（内国株式）', '東証グロース')\
+                            .replace('スタンダード（内国株式）', '東証スタンダード')\
+                            .replace('PRO Market', 'Tokyo PRO')
+                    ]
+                ),
+                DataExtractor(
+                    XPathSelector('capital', '//*[@id="__next"]/div[1]/div[1]/div[2]/div[1]/div/div[1]/div[2]/div/div[3]/div[1]/div[2]/text()'),
+                    [
+                        lambda value: value.strip(),
+                        lambda value: None if value == '-万円' else value
+                    ]
+                )
             ]),
             "https://alarmbox.jp/companyinfo/entities/{}": DataSetExtractors([
-                TableRowExtractor('company_url', 'URL'),
-                TableRowExtractor('capital', '資本金'),
-                TableRowExtractor('employee_number', '従業員数'),
-                TableRowExtractor('telephone', '電話番号'),
-                TableRowExtractor('market', '上場区分'),
-                TableRowExtractor('ticker_symbol', '証券コード'),
+                DataExtractor(
+                    TableRowExtractor('company_url', 'URL'),
+                    [
+                        lambda value: value.strip(),
+                        lambda value: value if re.match(r"^(https|http)?://[\w/:%#\$&\?\(\)~\.=\+\-]+", value) else None
+                    ]
+                ),
+                DataExtractor(
+                    TableRowExtractor('capital', '資本金'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: None if value == '-' else value
+                    ]
+                ),
+                DataExtractor(
+                    TableRowExtractor('employee_number', '従業員数'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: None if value == '-' else value,
+                        lambda value: int(value.replace('人', ''))
+                    ]
+                ),
+                DataExtractor(
+                    TableRowExtractor('telephone', '電話番号'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: None if value == '-' else value,
+                    ]
+                ),
+                DataExtractor(
+                    TableRowExtractor('market', '上場区分'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                    ]
+                ),
             ]),
             "https://cnavi.g-search.or.jp/detail/{}.html": DataSetExtractors([
-                TableRowExtractor('capital', '資本金'),
-                TableRowExtractor('employee_number', '従業員数'),
+                DataExtractor(
+                    TableRowExtractor('capital', '資本金'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: None if value == '－' else value,
+                    ]
+                ),
+                DataExtractor(
+                    TableRowExtractor('employee_number', '従業員数'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: None if value == '－' or not re.match('[0-9]+人', value) else value,
+                        lambda value: int(value.replace('人', ''))
+                    ]
+                )
             ]),
             "https://www.houjin.info/detail/{}/": DataSetExtractors([
-                CssSelector('company_url', 'td > a[target="_blank"]'),
+                DataExtractor(
+                    CssSelector('company_url', 'td > a[target="_blank"]'),
+                    [
+                        lambda value: value.replace('\n', '').replace('\t', '').strip(),
+                        lambda value: value if re.match(r"^(https|http)?://[\w/:%#\$&\?\(\)~\.=\+\-]+", value) else None
+                    ]
+                )
             ])
         }
 
@@ -63,7 +141,7 @@ class ScrapeCompanyApplicationService:
             url = URL(_url.format(corporate_number))
             try:
                 page = self.__page_service.fetch(url)
-                dataset = dataset_extractors.extract(interim, page)
+                dataset = asyncio.run(dataset_extractors.extract(interim, page))
                 scraped.append(dataset)
             except Exception as e:
                 self.log.error(e)
@@ -72,17 +150,19 @@ class ScrapeCompanyApplicationService:
         # 収集した法人情報をまとめる
         dataset = DataSet.concat(scraped)
 
+        self.log.info(f"{corporate_number}: {dataset.to_dict()}")
+
         # TODO: 他Webサイトから事前に収集した情報(売上高,資金調達,...)と統合する
 
-        if not interim.get('company_url'):
-            # ホームページがない場合は、Google の検索結果を元にホームページを収集
-            url = ScrapeCompanyURLService().scrape(interim)
-            if url:
-                interim.set('company_url', url.absolute)
+        # if not interim.get('company_url'):
+        #     ホームページがない場合は、Google の検索結果を元にホームページを収集
+        #     url = ScrapeCompanyURLService().scrape(interim)
+        #     if url:
+        #        interim.set('company_url', url.absolute)
 
         # TODO: ホームページから各情報を収集する
 
         interim = interim.set_with_dataset(dataset)
 
         self.__interim_repository.save(interim)
-        time.sleep(int(random.uniform(3, 10)))
+        time.sleep(int(random.uniform(3, 5)))

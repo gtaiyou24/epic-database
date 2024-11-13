@@ -6,8 +6,6 @@ from typing import TypedDict, Literal, Any
 
 import fake_useragent
 import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
 from injector import singleton, inject
 from slf4py import set_logger
 
@@ -15,7 +13,7 @@ from common.application import transactional
 from common.exception import SystemException, ErrorCode
 from crawler.domain.model.listing import ListingManagementService
 from crawler.domain.model.interim import InterimRepository, Interim, InterimId
-from crawler.domain.model.url import URLSet, URL
+from crawler.domain.model.url import URLSet
 
 
 class HojinInfoJson(TypedDict):
@@ -61,13 +59,12 @@ class CompanyApplicationService:
                  interim_repository: InterimRepository):
         self.__dataset_service = dataset_service
         self.__interim_repository = interim_repository
-        self.__cached_session = CacheControl(requests.Session(), cache=FileCache('.webcache'))
 
     def download(self) -> None:
         """gBizINFO から法人データを一括ダウンロードする"""
         self.log.info("gBizINFO から法人データをダウンロード中...")
 
-        response = self.__cached_session.post(
+        response = requests.post(
             'https://info.gbiz.go.jp/hojin/DownloadJson',
             headers={
                 'Content-Type': 'application/json',
