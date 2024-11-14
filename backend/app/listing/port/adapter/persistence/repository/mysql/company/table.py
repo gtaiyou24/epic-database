@@ -106,7 +106,7 @@ class CompanyOfficesTableRow(DataBase):
         ) for office in company.offices]
 
     def to_value(self) -> Address:
-        return Address(self.country, self.postal_code, Prefecture[self.prefecture], self.city, self.street)
+        return Address(self.country, str(self.postal_code), Prefecture[self.prefecture], self.city, self.street)
 
 
 class CompanyContactPointsTableRow(DataBase):
