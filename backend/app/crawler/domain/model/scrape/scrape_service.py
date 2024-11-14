@@ -77,7 +77,6 @@ class ScrapeCompanyURLService(ScrapeService):
         #         beautiful_soup = page.to_beautiful_soup()
         #         print(page.url, beautiful_soup.text)
         #
-        # print(f'===================================== {interim.get('corporate_number')}/{interim.get('name')} =====================================')
         # try:
         #     for a in beautiful_soup.select_one('#search').find_all('a'):
         #         href = a.get('href', None)

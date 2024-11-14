@@ -37,24 +37,33 @@ class ScrapeCompanyApplicationService:
             ]),
             "https://salesnow.jp/db/companies/{}": DataSetExtractors([
                 DataExtractor(
-                    XPathSelector('company_url', '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[2]/div/text()'),
+                    XPathSelector(
+                        'company_url',
+                        '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[2]/div/text()'
+                    ),
                     [
                         lambda value: value.strip(),
                         lambda value: value if re.match(r"^(https|http)?://[\w/:%#\$&\?\(\)~\.=\+\-]+", value) else None
                     ]
                 ),
                 DataExtractor(
-                    XPathSelector('market', '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[4]/span/text()[2]'),
+                    XPathSelector(
+                        'market',
+                        '//*[@id="__next"]/div[1]/div[1]/div[1]/div[4]/div/div[1]/div[3]/div[4]/span/text()[2]'
+                    ),
                     [
                         lambda value: value.replace('\n', '').replace('\t', '').strip(),
-                        lambda value: value.replace('プライム（内国株式）', '東証プライム')\
-                            .replace('グロース（内国株式）', '東証グロース')\
-                            .replace('スタンダード（内国株式）', '東証スタンダード')\
-                            .replace('PRO Market', 'Tokyo PRO')
+                        lambda value: value.replace('プライム（内国株式）', '東証プライム').replace(
+                            'グロース（内国株式）', '東証グロース'
+                        ).replace('スタンダード（内国株式）', '東証スタンダード').replace('PRO Market', 'Tokyo PRO')
                     ]
                 ),
                 DataExtractor(
-                    XPathSelector('capital', '//*[@id="__next"]/div[1]/div[1]/div[2]/div[1]/div/div[1]/div[2]/div/div[3]/div[1]/div[2]/text()'),
+                    XPathSelector(
+                        'capital',
+                        '//*[@id="__next"]/div[1]/div[1]/div[2]/div[1]/div/div[1]/div[2]/div/div[3]/div[1]/div[2]'
+                        '/text()'
+                    ),
                     [
                         lambda value: value.strip(),
                         lambda value: None if value == '-万円' else value
