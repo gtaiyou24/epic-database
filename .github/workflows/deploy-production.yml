@@ -68,5 +68,5 @@ jobs:
       cloud-run-service-account: 'subscriber@epic-database-439005.iam.gserviceaccount.com'
       cloud-run-min-instances: 0
       cloud-run-port: 8000
-      cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=InMem,Stub"
+      cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=Stub"
       cloud-run-secrets: "DATABASE_URL=DATABASE_URL:latest"
