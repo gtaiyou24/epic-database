@@ -69,5 +69,5 @@ jobs:
       cloud-run-min-instances: 0
       cloud-sql-vpc-connector: "projects/epic-database-439005/locations/asia-northeast1/connectors/application-db-vpc-con"
       cloud-run-port: 8000
-      cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES=Stub"
+      cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES="
       cloud-run-secrets: "DATABASE_URL=DATABASE_URL:latest"
