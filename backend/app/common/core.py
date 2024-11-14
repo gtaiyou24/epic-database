@@ -6,7 +6,6 @@ from di import DIContainer, DI
 from fastapi import APIRouter
 from redis import StrictRedis
 from sqlalchemy import create_engine, Engine
-from google.cloud.sql.connector import Connector, IPTypes
 
 from common.application import UnitOfWork
 from common.event import EventStore
