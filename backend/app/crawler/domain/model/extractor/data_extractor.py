@@ -56,7 +56,7 @@ class XPathSelector(DataExtractor):
 
     @override
     def extract(self, data_object: Interim, page: Page) -> Data | None:
-        lxml = html.fromstring(str(page.to_beautiful_soup()))
+        lxml = html.fromstring(str(page.to_beautiful_soup()).encode('utf-8'))
         r = lxml.xpath(self.__xpath)
         if not len(r):
             return None
