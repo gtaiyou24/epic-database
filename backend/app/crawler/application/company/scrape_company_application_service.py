@@ -137,11 +137,7 @@ class ScrapeCompanyApplicationService:
 
     def scrape_all(self):
         for interim in self.__interim_repository.interims_with_source(Interim.Source.GBIZINFO):
-            try:
-                self.scrape(interim.get('corporate_number'))
-            except Exception as e:
-                self.log.error(e)
-                continue
+            self.scrape(interim.get('corporate_number'))
 
     @transactional
     def scrape(self, corporate_number: str) -> None:
