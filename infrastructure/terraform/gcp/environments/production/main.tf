@@ -27,6 +27,7 @@ module "apis" {
     "cloudscheduler.googleapis.com",    # Cloud Scheduler
 
     # Database
+    "sqladmin.googleapis.com",
     "vpcaccess.googleapis.com",         # Serverless VPC Access
     "servicenetworking.googleapis.com", # Service Networking API
 

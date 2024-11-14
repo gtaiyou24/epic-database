@@ -62,10 +62,10 @@ resource "google_sql_user" "user" {
   password = var.db_password
 }
 
-# # 🔐 Cloud SQL にアクセスするサービスアカウントを指定
-# resource "google_project_iam_member" "cloud_sql_client" {
-#   for_each = { for idx, sa in var.db_client_service_accounts : idx => "serviceAccount:${sa}" }
-#   project = var.project_id
-#   role    = "roles/cloudsql.client"
-#   member = each.value
-# }
+# 🔐 Cloud SQL にアクセスするサービスアカウントを指定
+resource "google_project_iam_member" "cloud_sql_client" {
+  for_each = { for idx, sa in var.db_client_service_accounts : idx => "serviceAccount:${sa}" }
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+  member = each.value
+}

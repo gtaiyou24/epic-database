@@ -51,9 +51,10 @@ class Common(AppModule):
     def startup(self) -> None:
         if "InMem" not in os.getenv("DI_PROFILE_ACTIVES", []):
             # データベースを構築する
+            connector = Connector()
             engine = create_engine(
                 "postgresql+pg8000://",
-                creator=Connector().connect(
+                creator=connector.connect(
                     "epic-database-439005:asia-northeast1:application-db",
                     "pg8000",
                     user="epicuser",
