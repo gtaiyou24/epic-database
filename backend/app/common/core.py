@@ -51,21 +51,7 @@ class Common(AppModule):
     def startup(self) -> None:
         if "InMem" not in os.getenv("DI_PROFILE_ACTIVES", []):
             # データベースを構築する
-            connector = Connector()
-            engine = create_engine(
-                "postgresql+pg8000://",
-                creator=connector.connect(
-                    "epic-database-439005:asia-northeast1:application-db",
-                    "pg8000",
-                    user="epicuser",
-                    password="Q<ef<R%+N)%qVP(o",
-                    db="epicdatabase",
-                    ip_type=IPTypes.PRIVATE,
-                ),
-                echo=os.getenv("SLF4PY_LOG_LEVEL", "DEBUG") == "DEBUG"
-            )
-
-            # engine = create_engine(os.getenv("DATABASE_URL"), echo=os.getenv("SLF4PY_LOG_LEVEL", "DEBUG") == "DEBUG")
+            engine = create_engine(os.getenv("DATABASE_URL"), echo=os.getenv("SLF4PY_LOG_LEVEL", "DEBUG") == "DEBUG")
             DIContainer.instance().register(DI.of(Engine, {}, engine))
             DataBase.metadata.create_all(bind=engine)
 
