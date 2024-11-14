@@ -8,6 +8,8 @@ from crawler.domain.model.page import Page
 
 class AsyncExtractor:
     def __init__(self, data_object: Interim, page: Page):
+        assert isinstance(data_object, Interim), f"data_object {data_object} must be an Interim object"
+        assert isinstance(page, Page), f"page {page} must be an Page object"
         self.data_object = data_object
         self.page = page
 
