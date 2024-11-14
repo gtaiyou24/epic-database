@@ -45,7 +45,7 @@ class ListingModuleAdapter(ListingAdapter):
             offices=[
                 SaveCompanyCommand.Address(
                     country='JP',
-                    postal_code=interim.get('postal_code'),
+                    postal_code=str(interim.get('postal_code')),
                     prefecture=prefecture,
                     city=city,
                     street=street
