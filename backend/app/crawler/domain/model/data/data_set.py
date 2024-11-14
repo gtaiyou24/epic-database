@@ -23,7 +23,7 @@ class DataSet:
     def concat(dataset_list: list[DataSet]) -> DataSet:
         keys = set()
         for dataset in dataset_list:
-            for key in dataset.to_dict().keys():
+            for key in list(dataset.to_dict().keys()):
                 keys.add(key)
 
         values = dict()

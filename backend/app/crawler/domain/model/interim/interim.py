@@ -32,7 +32,7 @@ class Interim:
     def get(self, key: str, default: Any | None = None) -> Any | None:
         value = self.payload
         for k in key.split("."):
-            if value is None or k not in value.keys():
+            if value is None or k not in list(value):
                 return default
             value = value[k]
         return value
