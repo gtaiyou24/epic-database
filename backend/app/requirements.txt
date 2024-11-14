@@ -12,8 +12,8 @@ pytz==2024.1            # Timezone
 cachetools==5.3.2       # Cache
 SQLAlchemy==2.0.35      # DataBase
 mysqlclient==2.2.4      # MySQL
-#psycopg2-binary==2.9.9  # Postgresql
-#psycopg2==2.9.9         # Postgresql
+psycopg2-binary==2.9.9  # Postgresql
+psycopg2==2.9.9         # Postgresql
 redis[hiredis]          # Redis
 tqdm==4.66.6            # Progress
 
