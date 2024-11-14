@@ -41,6 +41,10 @@ on:
         description: 'Cloud Run で公開するポート番号'
         type: number
         default: 8080
+      cloud-sql-vpc-connector:
+        description: 'Cloud SQL に接続するための VPC コネクター'
+        type: string
+        required: false
       cloud-run-env-vars:
         description: 'Cloud Run で利用する環境変数. ex) ^@^KEY1=VALUE1@KEY2=@KEY3=VALUE2,VALUE3'
         type: string
@@ -101,6 +105,7 @@ jobs:
           --image ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber/fastapi:${{ inputs.docker-tag || github.sha }} \
           --platform "managed" \
           --memory "4Gi" \
+          --vpc-connector ${{ inputs.cloud-sql-vpc-connector }} \
           --service-account ${{ inputs.cloud-run-service-account }} \
           --min-instances ${{ inputs.cloud-run-min-instances }} \
           --port ${{ inputs.cloud-run-port }} \
