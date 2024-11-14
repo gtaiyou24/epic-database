@@ -100,6 +100,7 @@ jobs:
           --region ${{ inputs.region }} \
           --image ${{ inputs.region }}-docker.pkg.dev/${{ inputs.project-id }}/subscriber/fastapi:${{ inputs.docker-tag || github.sha }} \
           --platform "managed" \
+          --memory "1Gi" \
           --service-account ${{ inputs.cloud-run-service-account }} \
           --min-instances ${{ inputs.cloud-run-min-instances }} \
           --port ${{ inputs.cloud-run-port }} \
