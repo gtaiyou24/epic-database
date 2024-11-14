@@ -38,6 +38,7 @@ class CompanyResource(APIResource):
             uuid=request.uuid,
             corporate_number=request.jcn,
             name=request.name,
+            image=request.image,
             description=request.description,
             founded_at=request.founded_at,
             homepage=request.homepage,

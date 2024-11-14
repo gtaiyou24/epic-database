@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     common.shutdown()
     apigateway.shutdown()
     authority.shutdown()
-    listing.startup()
+    listing.shutdown()
     payment.shutdown()
 
 app = FastAPI(
