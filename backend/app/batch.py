@@ -17,10 +17,10 @@ class Module(Enum):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("module", type=str, required=True, choices=[e.name for e in Module],
+    parser = argparse.ArgumentParser(description='Batch')
+    parser.add_argument("module", type=str, choices=[e.name for e in Module],
                         help="モジュール名を指定してください。")
-    parser.add_argument("name", type=str, required=True, help="バッチ名を指定してください。")
+    parser.add_argument("name", type=str, help="バッチ名を指定してください。")
     parser.add_argument("--args", nargs='*', help="バッチの引数")
 
     args = parser.parse_args()
