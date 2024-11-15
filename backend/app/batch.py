@@ -21,11 +21,10 @@ if __name__ == "__main__":
     parser.add_argument("module", type=str, choices=[e.name for e in Module],
                         help="モジュール名を指定してください。")
     parser.add_argument("name", type=str, help="バッチ名を指定してください。")
-    parser.add_argument("--args", nargs='*', help="バッチの引数")
 
     args = parser.parse_args()
 
-    print(args.module)
-    print(args.name)
+    print("Module:", args.module)
+    print("Name:", args.name)
 
     # Module[args.module].run(args.name, args.args)
