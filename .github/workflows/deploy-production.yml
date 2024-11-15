@@ -84,7 +84,7 @@ jobs:
       workload-identity-provider: 'projects/917173493008/locations/global/workloadIdentityPools/github-actions-oidc/providers/github-actions-oidc-provider'
       github-actions-service-account: 'github-actions@epic-database-439005.iam.gserviceaccount.com'
       cloud-run-name: 'batch'
-      cloud-run-service-account: 'batch@epic-database-439005.iam.gserviceaccount.com'
+      cloud-run-service-account: 'batcher@epic-database-439005.iam.gserviceaccount.com'
       cloud-sql-vpc-connector: "projects/epic-database-439005/locations/asia-northeast1/connectors/application-db-vpc-con"
       cloud-run-env-vars: "^@^SLF4PY_LOG_LEVEL=INFO@OPENAPI_PREFIX=@DI_PROFILE_ACTIVES="
       cloud-run-secrets: "DATABASE_URL=DATABASE_URL:latest"
