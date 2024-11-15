@@ -57,6 +57,14 @@ module "subscriber" {
   depends_on = [module.web_application]
 }
 
+module "batch" {
+  source = "../../services/batch"
+
+  project_id = var.project_id
+  project_number = var.project_number
+  region = var.region
+}
+
 module "storage" {
   source = "../../services/storage"
 
@@ -98,10 +106,11 @@ module "db" {
 
   db_client_service_accounts = [
     module.subscriber.service_account_email,
-    module.web_application.service_account_email
+    module.web_application.service_account_email,
+    module.batch.service_account_email
   ]
 
-  depends_on = [module.web_application, module.subscriber]
+  depends_on = [module.web_application, module.subscriber, module.batch]
 }
 
 module "secretmanager" {
@@ -113,7 +122,8 @@ module "secretmanager" {
   }
   accessor_service_accounts = [
     module.web_application.service_account_email,
-    module.subscriber.service_account_email
+    module.subscriber.service_account_email,
+    module.batch.service_account_email
   ]
 
   depends_on = [module.db, module.web_application, module.subscriber]
