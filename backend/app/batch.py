@@ -1,8 +1,5 @@
 import argparse
 from enum import Enum
-from typing import Callable
-
-from common import ModuleBatch
 
 
 class Module(Enum):
