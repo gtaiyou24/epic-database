@@ -3,20 +3,20 @@ from enum import Enum
 from typing import Callable
 
 from common import ModuleBatch
-from market.batch import MarketBatch
 
 
 class Module(Enum):
-    MARKET = ('market', lambda: MarketBatch())
+    APIGATEWAY = 'api-gateway'
+    # MARKET = ('market', lambda: MarketBatch())
 
-    def __init__(self, module_name: str, instance: Callable[[], ModuleBatch]):
-        self.module_name = module_name
-        self.batch = instance()
-
-    def run(self, name: str, *args) -> None:
-        self.batch.startup()
-        self.batch.run(name, *args)
-        self.batch.shutdown()
+#     def __init__(self, module_name: str, instance: Callable[[], ModuleBatch]):
+#         self.module_name = module_name
+#         self.batch = instance()
+#
+#     def run(self, name: str, *args) -> None:
+#         self.batch.startup()
+#         self.batch.run(name, *args)
+#         self.batch.shutdown()
 
 
 if __name__ == "__main__":
@@ -28,4 +28,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    Module[args.module].run(args.name, args.args)
+    print(args.module)
+    print(args.name)
+
+    # Module[args.module].run(args.name, args.args)
