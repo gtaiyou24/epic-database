@@ -18,7 +18,7 @@ class Module(Enum):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Batch')
-    parser.add_argument("module", type=str, choices=[e.name for e in Module],
+    parser.add_argument("module", type=str, choices=[e.value for e in Module],
                         help="モジュール名を指定してください。")
     parser.add_argument("name", type=str, help="バッチ名を指定してください。")
 
