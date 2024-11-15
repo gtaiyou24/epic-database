@@ -120,7 +120,13 @@ resource "google_cloud_scheduler_job" "cron" {
     oauth_token {
       service_account_email = google_service_account.batch_invoker.email
     }
-    body = base64encode("{\"overrides\": {\"containerOverrides\": [{\"args\": ${each.value.args}]}}")
+    body = base64encode(jsonencode({
+      overrides = {
+        containerOverrides = [{
+          args = each.value.args
+        }]
+      }
+    }))
   }
 
   depends_on = [google_cloud_run_v2_job.batch, google_service_account.batch_invoker]
