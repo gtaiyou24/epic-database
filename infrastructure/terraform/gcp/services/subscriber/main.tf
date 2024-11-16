@@ -116,11 +116,6 @@ locals {
       schedule    = "0 * * * *"
       body        = "{\"publisher_name\": \"api-gateway\", \"event_type\": \"HealthCheck.1\", \"greeting\": \"こんにちは\"}"
     },
-    "download_gbizinfo" = {
-      description = "gBizINFO から法人データをダウンロードする"
-      schedule    = "23 01 1 * *"    # 毎月の*月1日の1時23分にクローン起動を設定する。
-      body        = "{\"publisher_name\": \"scheduler\", \"event_type\": \"DownloadgBizINFO.1\"}"
-    }
     // ジョブを追記する
   }
 }
