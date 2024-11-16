@@ -25,7 +25,7 @@ class DownloadGBizINFOListener(ExchangeListener):
 
     @override
     def publisher_name(self) -> str:
-        return "scheduler"
+        return "crawler"
 
     @override
     def listens_to(self, event_type: str) -> bool:
