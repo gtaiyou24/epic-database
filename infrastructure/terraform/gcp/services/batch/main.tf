@@ -42,7 +42,7 @@ resource "google_cloud_run_v2_job" "batch" {
 
   template {
     template {
-      timeout         = "3600s"  # 1時間
+      timeout         = "43200s"  # 12時間
       max_retries     = 0   # リトライ回数
       service_account = google_service_account.batch.email
       containers {
