@@ -1,25 +1,46 @@
 import argparse
-from enum import Enum
+
+from slf4py import set_logger
+
+from apigateway import apigateway
+from authority import authority
+from common import common
+from common.port.adapter.messaging import ExchangeListener
+from crawler import crawler
+from listing import listing
+from payment import payment
 
 
-class Module(Enum):
-    APIGATEWAY = 'api-gateway'
-    # MARKET = ('market', lambda: MarketBatch())
+@set_logger
+class Batch:
+    def __init__(self, subscribers: set[ExchangeListener]):
+        self._subscribers = subscribers
 
-#     def __init__(self, module_name: str, instance: Callable[[], ModuleBatch]):
-#         self.module_name = module_name
-#         self.batch = instance()
-#
-#     def run(self, name: str, *args) -> None:
-#         self.batch.startup()
-#         self.batch.run(name, *args)
-#         self.batch.shutdown()
+    def startup(self) -> None:
+        common.startup()
+        apigateway.startup()
+        authority.startup()
+        crawler.startup()
+        listing.startup()
+        payment.startup()
+
+    def run(self, module: str, event_type: str, *args) -> None:
+        for subscriber in self._subscribers:
+            if subscriber.publisher_name() == module and subscriber.listens_to(event_type):
+                subscriber.filtered_dispatch(event_type, '')
+
+    def shutdown(self) -> None:
+        common.shutdown()
+        apigateway.shutdown()
+        authority.shutdown()
+        crawler.shutdown()
+        listing.shutdown()
+        payment.shutdown()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Batch')
-    parser.add_argument("module", type=str, choices=[e.value for e in Module],
-                        help="モジュール名を指定してください。")
+    parser.add_argument("module", type=str, help="モジュール名を指定してください。")
     parser.add_argument("name", type=str, help="バッチ名を指定してください。")
 
     args = parser.parse_args()
@@ -27,4 +48,16 @@ if __name__ == "__main__":
     print("Module:", args.module)
     print("Name:", args.name)
 
-    # Module[args.module].run(args.name, args.args)
+    all_subscribers = set()
+    for module in [common, apigateway, authority, crawler, listing, payment]:
+        for subscriber in module.subscribers:
+            all_subscribers.add(subscriber)
+
+    batch = Batch(all_subscribers)
+    try:
+        batch.startup()
+        batch.run(args.module, args.name)
+    except Exception as e:
+        print(e)
+    finally:
+        batch.shutdown()
