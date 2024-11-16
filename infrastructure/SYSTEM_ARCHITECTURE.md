@@ -29,6 +29,10 @@ graph TD;
         subgraph Subscriber [Cloud Run / subscriber]
             Messaging[⚡️FastAPI]
         end
+        subgraph Batch [Cloud Run Job / batch]
+            Python[⚡Python]
+        end
+        Schedular -.-> |起動|Batch
         
         subgraph DB [VPC ネットワーク]
             SQL[(💾️ Cloud SQL)]
@@ -42,13 +46,14 @@ graph TD;
         Subscriber --> SecretManager
         Compute -.-> |Push|MQ
         Compute --> DB[(💾️ Cloud SQL)]
+        Batch --> DB
+        Batch --> Storage
         MQ -.-> |Push|Subscriber
     end
 
     Subscriber --> DB
     Compute --> Cache[(💾️ Upstash)]
-    Compute -.-> |通知|Monitering[/🚨 Sentry / New Relic/]
-    Subscriber -.-> |通知|Monitering
+    Monitering[/🚨 Sentry / New Relic/]
     
     subgraph GitHub [🐙GitHub]
         Repository[🐙GitHub]
@@ -78,7 +83,7 @@ classDef Integration fill:#c41f5d,color:#fff,stroke:#fff
 class User,Engineer External
 class SQL,Cache DataBase
 class DNS,CDN,LB,DB Network
-class Compute,Subscriber Compute
+class Compute,Subscriber,Batch Compute
 class Storage Storage
 class SecretManager Security
 class MQ,Schedular Integration

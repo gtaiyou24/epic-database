@@ -18,6 +18,11 @@ resource "google_service_account" "github_actions" {
   display_name = "GitHub Actions サービスアカウント"
   description  = "GitHub Actions が GCP へアプリをデプロイするためのサービスアカウント"
 }
+resource "google_project_iam_member" "iam_service_account_user" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"  # サービスアカウントユーザー
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
 # 🔐 GitHub Actions サービスアカウントにロールを付与
 resource "google_project_iam_member" "run-admin" {
   project = var.project_id
@@ -29,12 +34,13 @@ resource "google_project_iam_member" "artifact-registry-repo-admin" {
   role    = "roles/artifactregistry.repoAdmin"  # Artifact Registry へのプッシュ、削除をするためのロール
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
-resource "google_service_account_iam_member" "iam-service-account-user" {
-  for_each           = { for sa in var.deployment_service_account_ids : sa => "projects/${var.project_id}/serviceAccounts/${sa}" }
-  service_account_id = each.value
-  role               = "roles/iam.serviceAccountUser"  # GitHub Actions サービスアカウントに Cloud Run などのコンピューティングをデプロイする権限を付与
-  member             = "serviceAccount:${google_service_account.github_actions.email}"
-}
+
+# resource "google_service_account_iam_member" "iam-service-account-user" {
+#   for_each           = { for sa in var.deployment_service_account_ids : sa => "projects/${var.project_id}/serviceAccounts/${sa}" }
+#   service_account_id = each.value
+#   role               = "roles/iam.serviceAccountUser"  # GitHub Actions サービスアカウントに Cloud Run などのコンピューティングをデプロイする権限を付与
+#   member             = "serviceAccount:${google_service_account.github_actions.email}"
+# }
 
 # 🛠️ Workload Identity プール・プロバイダを作成する
 resource "google_iam_workload_identity_pool" "github_actions_oidc" {  # Workload Identity プールを作成
