@@ -55,35 +55,6 @@ resource "google_cloud_run_v2_job" "batch" {
 
 # ========== 🗓️ Scheduler を定義する ==========
 
-# 🤖 Cloud Run Job を呼び出すサービスアカウントを作成する
-resource "google_service_account" "batch_invoker" {
-  account_id   = "batch-invoker"
-  display_name = "Batch Invoker"
-  description = "Batch を呼び出す Scheduler のサービスアカウント"
-}
-
-# 🔐 Batch Invoker サービスアカウントが Batch (Cloud Run Job) を呼び出すための権限を付与
-resource "google_cloud_run_v2_job_iam_binding" "invoker_role" {
-  location = google_cloud_run_v2_job.batch.location
-  name     = google_cloud_run_v2_job.batch.name
-  role     = "roles/run.invoker"
-  members  = ["serviceAccount:${google_service_account.batch_invoker.email}"]
-}
-
-# 🔐 Batch Invoker がプロジェクトで認証トークンを作成できるようにします
-resource "google_project_service_identity" "scheduler_agent" {
-  provider = google-beta
-  project  = var.project_id
-  service  = "run.googleapis.com"
-}
-resource "google_project_iam_binding" "project_token_creator" {
-  project = var.project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
-  members = ["serviceAccount:${google_project_service_identity.scheduler_agent.email}"]
-
-  depends_on = [google_project_service_identity.scheduler_agent]
-}
-
 locals {
   jobs = {
     "health_check" = {
@@ -116,9 +87,9 @@ resource "google_cloud_scheduler_job" "cron" {
 
   http_target {
     http_method = "POST"
-    uri         = "https://${google_cloud_run_v2_job.batch.location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/jobs/${google_cloud_run_v2_job.batch.name}:run"
+    uri         = "https://${google_cloud_run_v2_job.batch.location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_number}/jobs/${google_cloud_run_v2_job.batch.name}:run"
     oauth_token {
-      service_account_email = google_service_account.batch_invoker.email
+      service_account_email = google_service_account.batch.email
     }
     body = base64encode(jsonencode({
       overrides = {
@@ -129,5 +100,5 @@ resource "google_cloud_scheduler_job" "cron" {
     }))
   }
 
-  depends_on = [google_cloud_run_v2_job.batch, google_service_account.batch_invoker]
+  depends_on = [google_cloud_run_v2_job.batch, google_service_account.batch]
 }
