@@ -60,12 +60,12 @@ locals {
     "health_check" = {
       description = "Batch ヘルスチェック"
       schedule    = "0 * * * *"
-      args        = "[\"api-gateway\", \"HealthCheck.1\"]"
+      args        = ["api-gateway", "HealthCheck.1"]
     },
     "download_gbizinfo" = {
       description = "gBizINFO から法人データをダウンロードする"
       schedule    = "23 01 1 * *"    # 毎月の*月1日の1時23分にクローン起動を設定する。
-      args        = "[\"crawler\", \"DownloadgBizINFO.1\"]"
+      args        = ["crawler", "DownloadgBizINFO.1"]
     }
     // ジョブを追記する
   }
